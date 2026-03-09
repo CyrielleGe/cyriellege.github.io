@@ -943,10 +943,12 @@ function setPalette(s,a){document.getElementById('color-sidebar').value=s;docume
 function applyFont(){const f=document.getElementById('cv-font-select').value;document.documentElement.style.setProperty('--cv-font',f);document.getElementById('cv-preview').style.fontFamily=f;}
 function applyFontSize(){
   const s=parseFloat(document.getElementById('font-size-range').value);
-  const r=s/11; // ratio basé sur 11px (taille de référence colonne gauche)
+  const r=s/11; 
   document.getElementById('font-size-val').textContent=s+'px';
   let el=document.getElementById('cv-font-override');
   if(!el){el=document.createElement('style');el.id='cv-font-override';document.head.appendChild(el);}
+  
+  // Uniquement des tailles entières, aucune décimale.
   el.textContent=`
     #cv-preview{font-size:${Math.round(s)}px!important}
     #cv-preview .cv-name{font-size:${Math.round(20*r)}px!important}
@@ -1573,27 +1575,29 @@ function printElement(elements){
 
   const style=document.createElement('style');
   style.id='cv-print-style';
-  // CORRECTION : Ajout de règles strictes d'overflow pour empêcher la 2ème page blanche
   style.textContent=`
     @media print {
       @page { size: 794px 1123px; margin: 0; }
-      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; text-shadow: none !important; }
+      
+      /* FIX : On remplace les fonds transparents par des gris/bleus opaques purs */
+      .cv-skill-tag, .cv-skill-soft-tag { background: #eef2ff !important; color: #111 !important; border: 1px solid #ccc !important; }
+      .cv-interest-tag { background: #f5f5f5 !important; color: #111 !important; border: 1px solid #ddd !important; }
+      
+      /* FIX 2 PAGES : Blocage absolu de la hauteur */
       html, body { overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
       body > * { display: none !important; }
-      #cv-print-container { 
-        display: block !important; margin: 0 !important; padding: 0 !important; 
-        width: 794px !important; height: 1123px !important; overflow: hidden !important; 
-      }
+      #cv-print-container { display: block !important; margin: 0 !important; padding: 0 !important; width: 794px !important; height: 1123px !important; overflow: hidden !important; }
       #cv-print-container > * {
         display: flex !important;
         transform: none !important; box-shadow: none !important;
-        width: 794px !important; height: 1123px !important; max-height: 1123px !important;
+        height: 1123px !important; max-height: 1123px !important; width: 794px !important;
         margin: 0 !important; overflow: hidden !important;
       }
       #cv-print-container .cv-sidebar,
       #cv-print-container .cv-col-left { height: 1123px !important; align-self: stretch !important; }
       #cv-print-container .cv-main { height: 1123px !important; align-self: stretch !important; }
-      .cv-print-break { page-break-before: always; break-before: page; display: block !important; height: 0 !important; }
+      .cv-print-break { page-break-before: always; display: block !important; height: 0 !important; }
       .cv-drag-handle, .cv-sidebar-drag, .cv-col-left-drag, .cv-empty-hint { display: none !important; }
       ${foCSS}
     }
@@ -1605,16 +1609,14 @@ function printElement(elements){
   container.style.cssText='position:absolute;top:0;left:0;pointer-events:none;';
   document.body.appendChild(container);
 
-  const parents=[]; 
   elements.forEach((el,i)=>{
-    parents.push({el, parent:el.parentElement, next:el.nextSibling});
     if(i>0){
       const brk=document.createElement('div');
       brk.className='cv-print-break';
       container.appendChild(brk);
     }
     const clone=el.cloneNode(true);
-    clone.id=el.id;
+    clone.id=el.id+'-print';
     clone.className=el.className;
     clone.removeAttribute('style');
     clone.querySelectorAll('.cv-drag-handle,.cv-sidebar-drag,.cv-col-left-drag,.cv-empty-hint').forEach(h=>h.remove());
