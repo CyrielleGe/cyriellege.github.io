@@ -1568,72 +1568,35 @@ function loadData(){
   }catch(e){console.error(e);}
 }
 function clearAll(){if(!confirm('Effacer toutes les données ?'))return;localStorage.removeItem('cv_builder_v2');location.reload();}
-// ── EXPORT PDF via @media print direct (texte vectoriel, pas de popup) ──
-function printElement(elements){
-  const fo=document.getElementById('cv-font-override');
-  const foCSS=fo?fo.textContent:'';
+// ── IMPRESSION NATIVE FIABLE ──
+function preparePrint(showCV, showLettre) {
+  // 1. Désactiver temporairement le zoom pour éviter les bugs de taille
+  const currentZoom = zoomLevel;
+  zoomLevel = 1;
+  applyZoom();
 
-  const style=document.createElement('style');
-  style.id='cv-print-style';
-  style.textContent=`
-    @media print {
-      @page { size: 794px 1123px; margin: 0; }
-      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; text-shadow: none !important; }
-      
-      /* FIX FIREFOX LINUX : On remplace les fonds transparents par des gris/bleus opaques purs */
-      .cv-skill-tag, .cv-skill-soft-tag { background: #eef2ff !important; color: #111 !important; border: 1px solid #ccc !important; }
-      .cv-interest-tag { background: #f5f5f5 !important; color: #111 !important; border: 1px solid #ddd !important; }
-      
-      /* FIX 2 PAGES : Blocage absolu de la hauteur */
-      html, body { overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
-      body > * { display: none !important; }
-      #cv-print-container { display: block !important; margin: 0 !important; padding: 0 !important; width: 794px !important; height: 1123px !important; overflow: hidden !important; }
-      #cv-print-container > * {
-        display: flex !important;
-        transform: none !important; box-shadow: none !important;
-        height: 1123px !important; max-height: 1123px !important; width: 794px !important;
-        margin: 0 !important; overflow: hidden !important;
-      }
-      #cv-print-container .cv-sidebar,
-      #cv-print-container .cv-col-left { height: 1123px !important; align-self: stretch !important; }
-      #cv-print-container .cv-main { height: 1123px !important; align-self: stretch !important; }
-      .cv-print-break { page-break-before: always; display: block !important; height: 0 !important; }
-      .cv-drag-handle, .cv-sidebar-drag, .cv-col-left-drag, .cv-empty-hint { display: none !important; }
-      ${foCSS}
-    }
-  `;
-  document.head.appendChild(style);
-
-  const container=document.createElement('div');
-  container.id='cv-print-container';
-  container.style.cssText='position:absolute;top:0;left:0;pointer-events:none;';
-  document.body.appendChild(container);
-
-  elements.forEach((el,i)=>{
-    if(i>0){
-      const brk=document.createElement('div');
-      brk.className='cv-print-break';
-      container.appendChild(brk);
-    }
-    const clone=el.cloneNode(true);
-    clone.id=el.id+'-print';
-    clone.className=el.className;
-    clone.removeAttribute('style');
-    clone.querySelectorAll('.cv-drag-handle,.cv-sidebar-drag,.cv-col-left-drag,.cv-empty-hint').forEach(h=>h.remove());
-    container.appendChild(clone);
-  });
-
-  window.print();
-
-  setTimeout(()=>{
-    style.remove();
-    container.remove();
-  }, 2000);
+  // 2. Afficher seulement ce qu'on veut exporter
+  document.getElementById('cv-wrapper').style.display = showCV ? 'block' : 'none';
+  document.getElementById('lettre-wrapper').style.display = showLettre ? 'block' : 'none';
+  
+  showToast('💡 Impression native : Choisis "Enregistrer au format PDF"');
+  
+  // 3. Imprimer (le CSS @media print fera le reste)
+  setTimeout(() => { 
+    window.print(); 
+    
+    // 4. Restaurer l'affichage normal après la fermeture de la fenêtre d'impression
+    zoomLevel = currentZoom;
+    applyZoom();
+    document.getElementById('cv-wrapper').style.display = 'block';
+    const panelLettreActive = document.getElementById('panel-lettre').classList.contains('active');
+    document.getElementById('lettre-wrapper').style.display = panelLettreActive ? 'block' : 'none';
+  }, 400);
 }
-function exportPDF(){
-  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
-  setTimeout(()=>printElement([document.getElementById('cv-preview')]),200);
-}
+
+function exportPDF() { preparePrint(true, false); }
+function exportLettreSeule() { renderLettre(); preparePrint(false, true); }
+function exportCVetLettre() { renderLettre(); preparePrint(true, true); }
 function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22222e;color:#e8e8f0;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid #2e2e3e;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:opacity .3s;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
 
 document.addEventListener('DOMContentLoaded',()=>{
