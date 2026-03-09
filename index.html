@@ -66,12 +66,6 @@ select option{background:var(--surface2);}
 .entry-body.open{display:block;}
 .add-entry-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;background:transparent;border:1px dashed var(--border);border-radius:9px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
 .add-entry-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.05);}
-.tags-input-wrapper{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px;display:flex;flex-wrap:wrap;gap:5px;cursor:text;min-height:40px;transition:border-color .15s;}
-.tags-input-wrapper:focus-within{border-color:var(--accent);}
-.tag{background:rgba(108,99,255,.2);color:var(--accent);padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:4px;}
-.tag .tag-remove{cursor:pointer;opacity:.7;font-size:13px;}
-.tag .tag-remove:hover{opacity:1;}
-.tags-input{border:none!important;background:transparent!important;padding:2px 3px!important;font-size:13px!important;flex:1;min-width:80px;}
 .star-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
 .star-label{font-size:13px;flex:1;color:var(--text);}
 .star-remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;}
@@ -322,9 +316,43 @@ select option{background:var(--surface2);}
 .cv-qr-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;opacity:.6;}
 .cv-qr-block canvas,.cv-qr-block img{border-radius:4px;}
 
-/* ── IMPRESSION / EXPORT PDF ── */
-/* impression via window.open — pas de @media print nécessaire */
-
+/* ── IMPRESSION / EXPORT PDF (LA VRAIE MÉTHODE ATS-FRIENDLY) ── */
+@media print {
+  @page { size: A4; margin: 0; }
+  body { 
+    background: white !important; 
+    margin: 0 !important; 
+    padding: 0 !important; 
+    overflow: visible !important; 
+    height: auto !important; 
+    display: block !important; 
+  }
+  header, .sidebar, .form-area, .resize-handle, .preview-toolbar, .modal-overlay, .modal-close, .modal-hint { 
+    display: none !important; 
+  }
+  .app { display: block !important; overflow: visible !important; height: auto !important; }
+  .preview-area { 
+    display: block !important; 
+    padding: 0 !important; 
+    overflow: visible !important; 
+    background: transparent !important; 
+  }
+  .cv-page-wrapper, #lettre-wrapper { 
+    transform: none !important; /* Annule l'effet de zoom pendant l'impression */
+    margin: 0 !important; 
+    box-shadow: none !important; 
+  }
+  #lettre-wrapper {
+    page-break-before: always;
+  }
+  #cv-preview, #lettre-preview { 
+    width: 794px !important; 
+    min-height: 1123px !important; 
+  }
+  .cv-drag-handle, .cv-sidebar-drag, .cv-col-left-drag, .cv-empty-hint, .entry-toggle { 
+    display: none !important; 
+  }
+}
 </style>
 </head>
 <body>
@@ -369,7 +397,6 @@ select option{background:var(--surface2);}
   </nav>
   <div class="form-area" id="form-area">
 
-    <!-- INFORMATIONS -->
     <div class="section-panel active" id="panel-informations">
       <div class="panel-title">Informations</div>
       <div class="panel-subtitle">Photo, identité et coordonnées de contact.</div>
@@ -430,7 +457,6 @@ select option{background:var(--surface2);}
       </div>
     </div>
 
-    <!-- PERSONNALISER -->
     <div class="section-panel" id="panel-personnaliser">
       <div class="panel-title">Personnaliser</div>
       <div class="panel-subtitle">Choisis un modèle, des couleurs et une typographie.</div>
@@ -530,7 +556,6 @@ select option{background:var(--surface2);}
       </div>
     </div>
 
-    <!-- COMPETENCES -->
     <div class="section-panel" id="panel-competences">
       <div class="panel-title">Compétences</div>
       <div class="panel-subtitle">Ajoute tes compétences une par une. Réordonne-les avec ⠿.</div>
@@ -552,7 +577,6 @@ select option{background:var(--surface2);}
       </div>
     </div>
 
-    <!-- LANGUES -->
     <div class="section-panel" id="panel-langues">
       <div class="panel-title">Langues</div>
       <div class="panel-subtitle">Ajoute chaque langue avec son niveau.</div>
@@ -574,7 +598,6 @@ select option{background:var(--surface2);}
       </div>
     </div>
 
-    <!-- CERTIFICATIONS -->
     <div class="section-panel" id="panel-certifications">
       <div class="panel-title">Certifications</div>
       <div class="panel-subtitle">Ajoute tes certifications et cours professionnels.</div>
@@ -582,7 +605,6 @@ select option{background:var(--surface2);}
       <button class="add-entry-btn" onclick="addCertif()">+ Ajouter une certification</button>
     </div>
 
-    <!-- INTERETS -->
     <div class="section-panel" id="panel-interets">
       <div class="panel-title">Centres d'intérêt</div>
       <div class="panel-subtitle">Ajoute chaque centre d'intérêt un par un.</div>
@@ -595,7 +617,6 @@ select option{background:var(--surface2);}
       </div>
     </div>
 
-    <!-- FORMATIONS -->
     <div class="section-panel" id="panel-formations">
       <div class="panel-title">Formations</div>
       <div class="panel-subtitle">Du diplôme le plus récent au plus ancien.</div>
@@ -603,7 +624,6 @@ select option{background:var(--surface2);}
       <button class="add-entry-btn" onclick="addEntry('formations')">+ Ajouter une formation</button>
     </div>
 
-    <!-- EXPERIENCES -->
     <div class="section-panel" id="panel-experiences">
       <div class="panel-title">Expériences professionnelles</div>
       <div class="panel-subtitle">Du poste le plus récent au plus ancien.</div>
@@ -611,14 +631,12 @@ select option{background:var(--surface2);}
       <button class="add-entry-btn" onclick="addEntry('experiences')">+ Ajouter une expérience</button>
     </div>
 
-    <!-- ASSOCIATIONS -->
     <div class="section-panel" id="panel-associations">
       <div class="panel-title">Expériences associatives</div>
       <div class="panel-subtitle">Engagements, bénévolat, projets.</div>
       <div class="entries-list" id="associations-list"></div>
       <button class="add-entry-btn" onclick="addEntry('associations')">+ Ajouter une expérience</button>
     </div>
-    <!-- SECTIONS PERSONNALISÉES GAUCHE -->
     <div class="section-panel" id="panel-custom-gauche">
       <div class="panel-title">Sections personnalisées</div>
       <div class="panel-subtitle">Ajoute des sections sur mesure dans la colonne gauche du CV.</div>
@@ -626,7 +644,6 @@ select option{background:var(--surface2);}
       <button class="add-entry-btn" onclick="addCustomSection('gauche')">+ Ajouter une section</button>
     </div>
 
-    <!-- SECTIONS PERSONNALISÉES DROITE -->
     <div class="section-panel" id="panel-custom-droite">
       <div class="panel-title">Sections personnalisées</div>
       <div class="panel-subtitle">Ajoute des sections sur mesure dans la colonne droite du CV.</div>
@@ -634,7 +651,6 @@ select option{background:var(--surface2);}
       <button class="add-entry-btn" onclick="addCustomSection('droite')">+ Ajouter une section</button>
     </div>
 
-    <!-- LETTRE DE MOTIVATION -->
     <div class="section-panel" id="panel-lettre">
       <div class="panel-title">Lettre de motivation</div>
       <div class="panel-subtitle">Rédige ta lettre — la mise en page s'adapte au modèle de CV choisi.</div>
@@ -711,9 +727,7 @@ Convaincu(e) de pouvoir apporter une contribution significative à votre équipe
       </div>
     </div>
 
-  </div><!-- /form-area -->
-
-  <div class="resize-handle" id="resize-handle"></div>
+  </div><div class="resize-handle" id="resize-handle"></div>
 
   <div class="preview-area" id="preview-area">
     <div class="preview-toolbar">
@@ -766,7 +780,6 @@ Convaincu(e) de pouvoir apporter une contribution significative à votre équipe
           <div id="cv-custom-gauche-sections"></div>
         </div>
         <div class="cv-main" id="cv-main-col">
-          <!-- Minimaliste top (hidden by default) -->
           <div id="cv-mini-top" style="display:none">
             <div class="cv-top-block">
               <div class="cv-top-left">
@@ -817,7 +830,6 @@ Convaincu(e) de pouvoir apporter une contribution significative à votre équipe
               </div>
             </div>
           </div>
-          <!-- Normal sections -->
           <div id="cv-normal-sections">
             <div class="cv-main-section"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Expériences professionnelles</div><div id="cv-experiences"><div class="cv-empty-hint">Remplis la section expériences...</div></div></div>
             <div class="cv-main-section" id="cv-asso-section" style="display:none"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Expériences associatives</div><div id="cv-associations"></div></div>
@@ -827,7 +839,6 @@ Convaincu(e) de pouvoir apporter une contribution significative à votre équipe
         </div>
       </div>
     </div>
-    <!-- PAGE LETTRE -->
     <div id="lettre-wrapper" style="display:none;flex-shrink:0;transform-origin:top center">
       <div id="lettre-preview" class="lettre-tpl-moderne">
       </div>
@@ -835,7 +846,6 @@ Convaincu(e) de pouvoir apporter une contribution significative à votre équipe
   </div>
 </div>
 
-<!-- MODAL PLEIN ECRAN -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnBg(event)">
   <div class="modal-cv-wrapper"><div id="modal-cv-inner" class="modal-cv-inner"></div></div>
 </div>
@@ -853,7 +863,6 @@ function showPanel(n){
   document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('panel-'+n).classList.add('active');
   document.getElementById('nav-'+n).classList.add('active');
-  // Afficher la lettre dans l'aperçu si on est dans ce panel
   const lw=document.getElementById('lettre-wrapper');
   if(lw){lw.style.display=(n==='lettre')?'block':'none';applyZoom();}
 }
@@ -865,14 +874,11 @@ function applyZoom(){
   const lw=document.getElementById('lettre-wrapper');
   cvW.style.transform=`scale(${zoomLevel})`;
   document.getElementById('zoom-val').textContent=Math.round(zoomLevel*100)+'%';
-  // scale() ne modifie pas le flux : compenser avec marginBottom
-  // gap = espace visuel occupé - espace dans le flux (négatif si zoom<1)
   const gap=Math.round(1123*zoomLevel)-1123;
   cvW.style.marginBottom=(gap+20)+'px';
   if(lw&&lw.style.display!=='none'){
     lw.style.transform=`scale(${zoomLevel})`;
     lw.style.marginTop='0';
-    // Collaper l'espace vide sous la lettre zoomée
     lw.style.marginBottom=gap+'px';
   }
 }
@@ -892,7 +898,6 @@ function openModal(){
   const cvClone=document.getElementById('cv-preview').cloneNode(true);
   cvClone.style.cssText='width:794px;min-height:1123px;';
   inner.appendChild(cvClone);
-  // Si lettre visible, l'ajouter aussi
   const lw=document.getElementById('lettre-wrapper');
   if(lw&&lw.style.display!=='none'){
     renderLettre();
@@ -941,28 +946,19 @@ function setPalette(s,a){document.getElementById('color-sidebar').value=s;docume
 function applyFont(){const f=document.getElementById('cv-font-select').value;document.documentElement.style.setProperty('--cv-font',f);document.getElementById('cv-preview').style.fontFamily=f;}
 function applyFontSize(){
   const s=parseFloat(document.getElementById('font-size-range').value);
-  const r=s/11; // ratio basé sur 11px (taille de référence colonne gauche)
+  const r=s/11; 
   document.getElementById('font-size-val').textContent=s+'px';
   let el=document.getElementById('cv-font-override');
   if(!el){el=document.createElement('style');el.id='cv-font-override';document.head.appendChild(el);}
   el.textContent=`
     #cv-preview{font-size:${s}px!important}
-    /* Nom + titre : proportionnels à la base */
     #cv-preview .cv-name{font-size:${(20*r).toFixed(1)}px!important}
     #cv-preview .cv-jobtitle{font-size:${(10*r).toFixed(1)}px!important}
-    /* Titres de section colonne droite */
     #cv-preview .cv-main-heading{font-size:${(10.5*r).toFixed(1)}px!important}
-    /* Titres d'entrée colonne droite */
     #cv-preview .cv-entry-title{font-size:${(12*r).toFixed(1)}px!important}
-    /* Tout le reste de la colonne gauche hérite de s (même taille que certif-name) */
     #cv-preview .cv-sidebar-heading{font-size:${(8.5*r).toFixed(1)}px!important}
-    #cv-preview .cv-contact-item,
-    #cv-preview .cv-skill-tag,#cv-preview .cv-skill-soft-tag,
-    #cv-preview .cv-lang-item,
-    #cv-preview .cv-certif-item,#cv-preview .cv-certif-name,
-    #cv-preview .cv-interest-item,#cv-preview .cv-interest-tag{font-size:${s}px!important}
+    #cv-preview .cv-contact-item,#cv-preview .cv-skill-tag,#cv-preview .cv-skill-soft-tag,#cv-preview .cv-lang-item,#cv-preview .cv-certif-item,#cv-preview .cv-certif-name,#cv-preview .cv-interest-item,#cv-preview .cv-interest-tag{font-size:${s}px!important}
     #cv-preview .cv-skill-sublabel,#cv-preview .cv-skill-sublabel-mini{font-size:${(7.5*r).toFixed(1)}px!important}
-    /* Colonne droite corps */
     #cv-preview .cv-entry-org{font-size:${s}px!important}
     #cv-preview .cv-entry-dates{font-size:${(9*r).toFixed(1)}px!important}
     #cv-preview .cv-entry-desc,#cv-preview .cv-bullet-item{font-size:${s}px!important}
@@ -1022,7 +1018,6 @@ function toggleCertif(id){
 function updateCertifField(id,field,val){
   const c=certifs.find(c=>c.id===id);if(!c)return;
   c[field]=field==='encours'?val:val;
-  // Mettre à jour le header
   const h=document.getElementById('certif-header-title-'+id);
   if(h)h.textContent=(c.name||'(sans titre)')+(c.org?' — '+c.org:'');
   updatePreview();
@@ -1048,14 +1043,12 @@ function renderCertifs(){
       <div class="entry-body" id="certif-body-${c.id}">
         <div class="field-row">
           <div class="field"><label>Nom du Certificat</label>
-            <input type="text" placeholder="Certification SecNumAcadémie" value="${c.name||''}"
-              oninput="updateCertifField(${c.id},'name',this.value)">
+            <input type="text" placeholder="Certification SecNumAcadémie" value="${c.name||''}" oninput="updateCertifField(${c.id},'name',this.value)">
           </div>
         </div>
         <div class="field-row">
           <div class="field"><label>Établissement</label>
-            <input type="text" placeholder="ANSSI, Coursera..." value="${c.org||''}"
-              oninput="updateCertifField(${c.id},'org',this.value)">
+            <input type="text" placeholder="ANSSI, Coursera..." value="${c.org||''}" oninput="updateCertifField(${c.id},'org',this.value)">
           </div>
           <div class="field" style="max-width:120px"><label>Mois</label>
             <select onchange="updateCertifField(${c.id},'mois',this.value)">
@@ -1063,20 +1056,17 @@ function renderCertifs(){
             </select>
           </div>
           <div class="field" style="max-width:100px"><label>Année</label>
-            <input type="text" placeholder="${new Date().getFullYear()}" value="${c.annee||''}" maxlength="4"
-              oninput="updateCertifField(${c.id},'annee',this.value)">
+            <input type="text" placeholder="${new Date().getFullYear()}" value="${c.annee||''}" maxlength="4" oninput="updateCertifField(${c.id},'annee',this.value)">
           </div>
         </div>
         <div class="field-row">
           <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);cursor:pointer;padding:2px 0">
-            <input type="checkbox" ${c.encours?'checked':''} style="width:auto;accent-color:var(--accent)"
-              onchange="updateCertifField(${c.id},'encours',this.checked)"> En cours
+            <input type="checkbox" ${c.encours?'checked':''} style="width:auto;accent-color:var(--accent)" onchange="updateCertifField(${c.id},'encours',this.checked)"> En cours
           </label>
         </div>
         <div class="field-row">
           <div class="field"><label>Description (optionnel)</label>
-            <textarea placeholder="Ex : Cours de programmation, Certification Google Analytics..."
-              oninput="updateCertifField(${c.id},'desc',this.value)">${c.desc||''}</textarea>
+            <textarea placeholder="Ex : Cours de programmation..." oninput="updateCertifField(${c.id},'desc',this.value)">${c.desc||''}</textarea>
           </div>
         </div>
       </div>`;
@@ -1133,14 +1123,12 @@ function renderEntries(type){
     <div class="entry-body" id="entry-body-${type}-${entry.id}"></div>`;
     const body=card.querySelector('.entry-body');
 
-    // Champs normaux (title, org, location, desc)
     let i=0;
     while(i<fields.length){
       const f=fields[i];const row=document.createElement('div');row.className='field-row';
       if(f.type==='textarea'){row.innerHTML=`<div class="field"><label>${f.label}</label><textarea placeholder="${f.placeholder}" oninput="updateEntryField('${type}',${entry.id},'${f.id}',this.value)">${entry[f.id]||''}</textarea></div>`;i++;}
       else if(i+1<fields.length&&fields[i+1].type!=='textarea'){const f2=fields[i+1];row.innerHTML=`<div class="field"><label>${f.label}</label><input type="text" placeholder="${f.placeholder}" value="${entry[f.id]||''}" oninput="updateEntryField('${type}',${entry.id},'${f.id}',this.value)"></div><div class="field"><label>${f2.label}</label><input type="text" placeholder="${f2.placeholder}" value="${entry[f2.id]||''}" oninput="updateEntryField('${type}',${entry.id},'${f2.id}',this.value)"></div>`;i+=2;}
       else{row.innerHTML=`<div class="field"><label>${f.label}</label><input type="text" placeholder="${f.placeholder}" value="${entry[f.id]||''}" oninput="updateEntryField('${type}',${entry.id},'${f.id}',this.value)"></div>`;i++;}
-      // Injecter la ligne de dates juste après org (2e champ = index 1)
       if(i===2){
         const dateRow=document.createElement('div');dateRow.className='field-row';
         dateRow.style.cssText='flex-wrap:wrap;gap:8px;align-items:flex-end;';
@@ -1174,11 +1162,7 @@ function renderEntries(type){
                 </div>
               </div>
               <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;padding-bottom:8px;white-space:nowrap">
-                <input type="checkbox" ${entry.encours?'checked':''} style="width:auto;accent-color:var(--accent)"
-                  onchange="
-                    updateEntryField('${type}',${entry.id},'encours',this.checked);
-                    document.getElementById('fin-fields-${type}-${entry.id}').style.display=this.checked?'none':'';
-                  "> En cours
+                <input type="checkbox" ${entry.encours?'checked':''} style="width:auto;accent-color:var(--accent)" onchange="updateEntryField('${type}',${entry.id},'encours',this.checked); document.getElementById('fin-fields-${type}-${entry.id}').style.display=this.checked?'none':'';"> En cours
               </label>
             </div>
           </div>`;
@@ -1218,9 +1202,8 @@ function updatePreview(){
   if(vv('autrelien'))ci.push({ic:'🌐',tx:vv('autrelien'),link:true});
   document.getElementById('cv-contact-list').innerHTML=ci.length?ci.map(i=>ciHTML(i,false)).join(''):'<div class="cv-contact-item cv-empty-hint">Remplis le contact...</div>';
   const cm=document.getElementById('cv-contact-mini');if(cm)cm.innerHTML=ci.map(i=>ciHTML(i,true)).join('');
-  // QR code LinkedIn
+  
   const showQR=document.getElementById('qr-linkedin')?.checked && vv('linkedin');
-  // Normaliser l'URL LinkedIn une seule fois
   let linkedinUrl='';
   if(showQR){
     let rawUrl=vv('linkedin');
@@ -1233,7 +1216,7 @@ function updatePreview(){
     try{new QRCode(canvasEl,{text:linkedinUrl,width:80,height:80,colorDark:dark,colorLight:bg,correctLevel:QRCode.CorrectLevel.L});}
     catch(e){canvasEl.innerHTML=`<div style="font-size:8px;color:#aaa;text-align:center;padding:4px">URL trop longue</div>`;}
   }
-  // Sidebar (templates Moderne + Coloré)
+  
   const qrBlock=document.getElementById('cv-qr-block');
   const qrCanvas=document.getElementById('cv-qr-canvas');
   if(qrBlock){
@@ -1244,7 +1227,7 @@ function updatePreview(){
       buildQR(qrCanvas,'#ffffff',qrBg);
     }
   }
-  // Col-left minimaliste
+  
   const qrMiniSect=document.getElementById('cv-qr-mini-sect');
   const qrCanvasMini=document.getElementById('cv-qr-canvas-mini');
   if(qrMiniSect){
@@ -1257,7 +1240,7 @@ function updatePreview(){
   const sh=tagStore.soft.map(t=>`<span class="cv-skill-soft-tag">${t}</span>`).join('');
   ['cv-tech-tags','cv-tech-tags-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=th;});
   ['cv-soft-tags','cv-soft-tags-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=sh;});
-  // Masquer sous-labels si vides
+  
   const tsl=document.getElementById('cv-tech-sublabel'),ssl=document.getElementById('cv-soft-sublabel');
   const tslm=document.getElementById('cv-tech-sublabel-mini'),sslm=document.getElementById('cv-soft-sublabel-mini');
   if(tsl)tsl.style.display=tagStore.tech.length?'':'none';
@@ -1293,7 +1276,6 @@ function updatePreview(){
 function renderCVEntries(type,targetId){
   const el=document.getElementById(targetId);if(!el)return;
   const arr=entries[type];
-  // Masquer/afficher la section associations si vide
   if(type==='associations'){
     const s1=document.getElementById('cv-asso-section'),s2=document.getElementById('cv-asso-mini-section');
     if(s1)s1.style.display=arr.length?'':'none';
@@ -1307,7 +1289,6 @@ function renderCVEntries(type,targetId){
   }).join('');
 }
 
-// ── SECTIONS PERSONNALISÉES ──
 function addCustomSection(col){
   const id=customCounters[col]++;
   customSections[col].push({id,titre:'',contenu:''});
@@ -1345,14 +1326,12 @@ function renderCustomSections(col){
       <div class="entry-body" id="custom-body-${col}-${s.id}">
         <div class="field-row">
           <div class="field"><label>Titre de la section</label>
-            <input type="text" placeholder="Ex: Projets, Publications..." value="${s.titre||''}"
-              oninput="updateCustomField('${col}',${s.id},'titre',this.value)">
+            <input type="text" placeholder="Ex: Projets..." value="${s.titre||''}" oninput="updateCustomField('${col}',${s.id},'titre',this.value)">
           </div>
         </div>
         <div class="field-row">
           <div class="field"><label>Contenu</label>
-            <textarea style="min-height:100px" placeholder="Décris le contenu de cette section..."
-              oninput="updateCustomField('${col}',${s.id},'contenu',this.value)">${s.contenu||''}</textarea>
+            <textarea style="min-height:100px" placeholder="Contenu de la section..." oninput="updateCustomField('${col}',${s.id},'contenu',this.value)">${s.contenu||''}</textarea>
           </div>
         </div>
       </div>`;
@@ -1363,50 +1342,32 @@ function renderCustomSections(col){
 }
 function renderCustomCV(){
   const isMini=currentTemplate==='minimaliste';
-
-  // Colonne gauche — sidebar (moderne/coloré)
   const gEl=document.getElementById('cv-custom-gauche-sections');
   if(gEl){
     gEl.innerHTML=(!isMini)?customSections.gauche.map(s=>{
       if(!s.titre&&!s.contenu)return'';
-      return`<div class="cv-sidebar-section">
-        <div class="cv-sidebar-heading">${s.titre||'Section'}</div>
-        <div style="font-size:inherit;line-height:1.6;white-space:pre-wrap">${s.contenu||''}</div>
-      </div>`;
+      return`<div class="cv-sidebar-section"><div class="cv-sidebar-heading">${s.titre||'Section'}</div><div style="font-size:inherit;line-height:1.6;white-space:pre-wrap">${s.contenu||''}</div></div>`;
     }).join(''):'';
   }
-  // Colonne gauche — col-left (minimaliste)
   const gMini=document.getElementById('cv-custom-gauche-mini');
   if(gMini){
     gMini.innerHTML=isMini?customSections.gauche.map(s=>{
       if(!s.titre&&!s.contenu)return'';
-      return`<div class="cv-main-section">
-        <div class="cv-main-heading">${s.titre||'Section'}</div>
-        <div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div>
-      </div>`;
+      return`<div class="cv-main-section"><div class="cv-main-heading">${s.titre||'Section'}</div><div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div></div>`;
     }).join(''):'';
   }
-
-  // Colonne droite — cv-normal-sections (moderne/coloré)
   const dEl=document.getElementById('cv-custom-droite-sections');
   if(dEl){
     dEl.innerHTML=(!isMini)?customSections.droite.map(s=>{
       if(!s.titre&&!s.contenu)return'';
-      return`<div class="cv-main-section">
-        <div class="cv-main-heading">${s.titre||'Section'}</div>
-        <div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div>
-      </div>`;
+      return`<div class="cv-main-section"><div class="cv-main-heading">${s.titre||'Section'}</div><div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div></div>`;
     }).join(''):'';
   }
-  // Colonne droite — cv-mini-right-custom (minimaliste)
   const dMini=document.getElementById('cv-custom-droite-mini');
   if(dMini){
     dMini.innerHTML=isMini?customSections.droite.map(s=>{
       if(!s.titre&&!s.contenu)return'';
-      return`<div class="cv-main-section">
-        <div class="cv-main-heading">${s.titre||'Section'}</div>
-        <div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div>
-      </div>`;
+      return`<div class="cv-main-section"><div class="cv-main-heading">${s.titre||'Section'}</div><div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div></div>`;
     }).join(''):'';
   }
 }
@@ -1439,30 +1400,15 @@ function renderLettre(){
   const el=document.getElementById('lettre-preview');
   el.className=tplClass;
 
-  // Header selon template
   let headerHTML='';
   if(currentTemplate==='moderne'){
-    headerHTML=`
-      <div class="lm-header">
-        <div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div>
-        <div class="lm-header-contact">${ci.join('<br>')}</div>
-      </div>
-      <div class="lm-accent-bar"></div>`;
+    headerHTML=`<div class="lm-header"><div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div><div class="lm-header-contact">${ci.join('<br>')}</div></div><div class="lm-accent-bar"></div>`;
   } else if(currentTemplate==='minimaliste'){
-    headerHTML=`
-      <div class="lm-header">
-        <div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div>
-        <div class="lm-header-contact">${ci.join('<br>')}</div>
-      </div>`;
+    headerHTML=`<div class="lm-header"><div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div><div class="lm-header-contact">${ci.join('<br>')}</div></div>`;
   } else if(currentTemplate==='colore'){
-    headerHTML=`
-      <div class="lm-header">
-        <div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div>
-        <div class="lm-header-contact">${ci.join('<br>')}</div>
-      </div>`;
+    headerHTML=`<div class="lm-header"><div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div><div class="lm-header-contact">${ci.join('<br>')}</div></div>`;
   }
 
-  // Destinataire
   const destLines=[];
   if(lettre.destNom)destLines.push(lettre.destNom);
   if(lettre.destEntreprise)destLines.push(`<span class="lm-dest-entreprise">${lettre.destEntreprise}</span>`);
@@ -1471,38 +1417,48 @@ function renderLettre(){
 
   const bodyHTML=`
     <div class="lm-body">
-      <div class="lm-meta-row">
-        ${destHTML}
-        <div class="lm-date-block">${lettre.date||''}</div>
-      </div>
+      <div class="lm-meta-row">${destHTML}<div class="lm-date-block">${lettre.date||''}</div></div>
       ${lettre.objet?`<div class="lm-objet"><strong>Objet :</strong> ${lettre.objet}</div>`:''}
       <div class="lm-appel">${lettre.appel}</div>
-      <div class="lm-corps-text">${lettre.corps||'<span style="color:#bbb;font-style:italic">Écris ta lettre dans le panneau de gauche...</span>'}</div>
+      <div class="lm-corps-text">${lettre.corps||'<span style="color:#bbb;font-style:italic">Écris ta lettre...</span>'}</div>
       ${lettre.politesse?`<div class="lm-politesse">${lettre.politesse}</div>`:''}
       <div class="lm-signature">${fullName}</div>
     </div>`;
 
   el.innerHTML=headerHTML+bodyHTML;
-
-  // Sync zoom
   const lw=document.getElementById('lettre-wrapper');
   if(lw)lw.style.transform=`scale(${zoomLevel})`;
 }
 
-function exportLettreSeule(){
-  renderLettre();
-  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
-  setTimeout(()=>printElement([document.getElementById('lettre-preview')]),200);
+// ── NOUVEAU SYSTÈME D'IMPRESSION FIABLE ──
+function preparePrint(showCV, showLettre) {
+  // 1. Désactiver temporairement le zoom pour forcer le navigateur à imprimer en taille réelle
+  const currentZoom = zoomLevel;
+  zoomLevel = 1;
+  applyZoom();
+
+  // 2. Afficher seulement ce qu'on veut exporter
+  document.getElementById('cv-wrapper').style.display = showCV ? 'block' : 'none';
+  document.getElementById('lettre-wrapper').style.display = showLettre ? 'block' : 'none';
+  
+  showToast('💡 Impression native : Choisis "Enregistrer au format PDF" dans la fenêtre');
+  
+  // 3. Déclencher l'impression native. Le @media print s'occupe de masquer les menus !
+  setTimeout(() => { 
+    window.print(); 
+    
+    // 4. Restaurer l'affichage initial une fois l'impression terminée ou annulée
+    zoomLevel = currentZoom;
+    applyZoom();
+    document.getElementById('cv-wrapper').style.display = 'block';
+    const panelLettreActive = document.getElementById('panel-lettre').classList.contains('active');
+    document.getElementById('lettre-wrapper').style.display = panelLettreActive ? 'block' : 'none';
+  }, 400);
 }
 
-function exportCVetLettre(){
-  renderLettre();
-  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
-  setTimeout(()=>printElement([
-    document.getElementById('cv-preview'),
-    document.getElementById('lettre-preview')
-  ]),200);
-}
+function exportPDF() { preparePrint(true, false); }
+function exportLettreSeule() { renderLettre(); preparePrint(false, true); }
+function exportCVetLettre() { renderLettre(); preparePrint(true, true); }
 
 function saveData(){
   const d={fields:['prenom','nom','titre','photo_url','tel','email','location','linkedin','github','autrelien','age','nationalite','permis'].reduce((a,id)=>{a[id]=vv(id);return a;},{}),tagStore,langues,certifs,certifCounter,interets,entries,entryCounters,customSections,customCounters,photoBase64,lettre,template:currentTemplate,colors:{sidebar:document.getElementById('color-sidebar').value,accent:document.getElementById('color-accent').value},font:document.getElementById('cv-font-select').value,fontSize:document.getElementById('font-size-range').value,qrLinkedin:document.getElementById('qr-linkedin')?.checked||false};
@@ -1519,12 +1475,9 @@ function loadData(){
     if(d.entries){
       entries=d.entries;
       entryCounters=d.entryCounters||{formations:0,experiences:0,associations:0};
-      // Compatibilité anciens saves : migrer 'dates' texte vers les nouveaux champs
       ['formations','experiences','associations'].forEach(type=>{
         entries[type].forEach(e=>{
-          if(!e.hasOwnProperty('debAnnee')){
-            e.debMois='';e.debAnnee='';e.finMois='';e.finAnnee='';e.encours=false;
-          }
+          if(!e.hasOwnProperty('debAnnee')){e.debMois='';e.debAnnee='';e.finMois='';e.finAnnee='';e.encours=false;}
         });
         renderEntries(type);
       });
@@ -1546,72 +1499,7 @@ function loadData(){
   }catch(e){console.error(e);}
 }
 function clearAll(){if(!confirm('Effacer toutes les données ?'))return;localStorage.removeItem('cv_builder_v2');location.reload();}
-// ── EXPORT PDF via impression native (texte vectoriel sélectionnable) ──
-function printElement(elements){
-  // Récupérer toutes les feuilles de style du document (Google Fonts + styles inline)
-  const styleSheets=Array.from(document.styleSheets).map(ss=>{
-    try{
-      if(ss.href) return '<link rel="stylesheet" href="'+ss.href+'">';
-      const rules=Array.from(ss.cssRules).map(r=>r.cssText).join('\n');
-      return '<style>'+rules+'</style>';
-    }catch(e){
-      return ss.href?'<link rel="stylesheet" href="'+ss.href+'">':'';
-    }
-  }).join('\n');
 
-  // Variables CSS courantes
-  const rs=getComputedStyle(document.documentElement);
-  const vars=(['--cv-sidebar','--cv-accent','--cv-text','--cv-font']
-    .map(v=>v+':'+rs.getPropertyValue(v)).join(';'));
-
-  // Font-size override
-  const fo=document.getElementById('cv-font-override');
-  const foCSS=fo?fo.textContent:'';
-
-  // Construire le HTML des pages
-  let pagesHTML='';
-  elements.forEach((el,i)=>{
-    const clone=el.cloneNode(true);
-    clone.id=el.id;
-    clone.className=el.className;
-    clone.removeAttribute('style');
-    // Retirer les handles drag
-    clone.querySelectorAll('.cv-drag-handle,.cv-sidebar-drag,.cv-col-left-drag,.cv-empty-hint').forEach(h=>h.remove());
-    if(i>0) pagesHTML+='<div class="page-break"></div>';
-    pagesHTML+=clone.outerHTML;
-  });
-
-  const pw=window.open('','_blank','width=900,height=700');
-  pw.document.write(`<!DOCTYPE html><html><head>
-<meta charset="UTF-8">
-${styleSheets}
-<style>
-  :root{${vars}}
-  ${foCSS}
-  *{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important;}
-  @page{size:794px 1123px;margin:0;}
-  html,body{margin:0;padding:0;background:white;width:794px;}
-  /* Pas de height fixe : le navigateur pagine naturellement */
-  body>*{width:794px;display:block;overflow:visible;}
-  .page-break{page-break-before:always;break-before:page;height:0;display:block;}
-  #cv-preview,#lettre-preview{
-    min-height:unset!important;
-    transform:none!important;
-    box-shadow:none!important;
-    overflow:visible!important;
-  }
-</style>
-</head><body>${pagesHTML}</body></html>`);
-  pw.document.close();
-  pw.focus();
-  // Attendre que les polices soient chargées avant d'imprimer
-  pw.onload=()=>setTimeout(()=>{pw.print();},400);
-  setTimeout(()=>{if(!pw.closed)pw.print();},1200);
-}
-function exportPDF(){
-  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
-  setTimeout(()=>printElement([document.getElementById('cv-preview')]),200);
-}
 function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22222e;color:#e8e8f0;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid #2e2e3e;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:opacity .3s;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
 
 document.addEventListener('DOMContentLoaded',()=>{
@@ -1622,12 +1510,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))handlePhotoUpload({target:{files:[f]}});});
   Sortable.create(document.getElementById('cv-normal-sections'),{animation:200,handle:'.cv-drag-handle',ghostClass:'cv-sortable-ghost'});
   Sortable.create(document.getElementById('cv-mini-right'),{animation:200,handle:'.cv-drag-handle',ghostClass:'cv-sortable-ghost'});
-  // Drag&drop sections colonne gauche du CV
-  // Drag sections sidebar (moderne + coloré)
   Sortable.create(document.querySelector('.cv-sidebar'),{animation:200,handle:'.cv-sidebar-drag',ghostClass:'cv-sidebar-sortable-ghost',filter:'.cv-photo-block'});
-  // Drag sections col-left (minimaliste)
   Sortable.create(document.querySelector('.cv-col-left'),{animation:200,handle:'.cv-col-left-drag',ghostClass:'cv-sortable-ghost'});
-  // Enter pour ajouter langue/certif/interet
   document.getElementById('new-tech').addEventListener('keydown',e=>{if(e.key==='Enter')addSkill('tech');});
   document.getElementById('new-soft').addEventListener('keydown',e=>{if(e.key==='Enter')addSkill('soft');});
   document.getElementById('new-lang-name').addEventListener('keydown',e=>{if(e.key==='Enter')addLangue();});
