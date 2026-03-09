@@ -948,26 +948,17 @@ function applyFontSize(){
   let el=document.getElementById('cv-font-override');
   if(!el){el=document.createElement('style');el.id='cv-font-override';document.head.appendChild(el);}
   el.textContent=`
-    #cv-preview{font-size:${s}px!important}
-    /* Nom + titre : proportionnels à la base */
-    #cv-preview .cv-name{font-size:${(20*r).toFixed(1)}px!important}
-    #cv-preview .cv-jobtitle{font-size:${(10*r).toFixed(1)}px!important}
-    /* Titres de section colonne droite */
-    #cv-preview .cv-main-heading{font-size:${(10.5*r).toFixed(1)}px!important}
-    /* Titres d'entrée colonne droite */
-    #cv-preview .cv-entry-title{font-size:${(12*r).toFixed(1)}px!important}
-    /* Tout le reste de la colonne gauche hérite de s (même taille que certif-name) */
-    #cv-preview .cv-sidebar-heading{font-size:${(8.5*r).toFixed(1)}px!important}
-    #cv-preview .cv-contact-item,
-    #cv-preview .cv-skill-tag,#cv-preview .cv-skill-soft-tag,
-    #cv-preview .cv-lang-item,
-    #cv-preview .cv-certif-item,#cv-preview .cv-certif-name,
-    #cv-preview .cv-interest-item,#cv-preview .cv-interest-tag{font-size:${s}px!important}
-    #cv-preview .cv-skill-sublabel,#cv-preview .cv-skill-sublabel-mini{font-size:${(7.5*r).toFixed(1)}px!important}
-    /* Colonne droite corps */
-    #cv-preview .cv-entry-org{font-size:${s}px!important}
-    #cv-preview .cv-entry-dates{font-size:${(9*r).toFixed(1)}px!important}
-    #cv-preview .cv-entry-desc,#cv-preview .cv-bullet-item{font-size:${s}px!important}
+    #cv-preview{font-size:${Math.round(s)}px!important}
+    #cv-preview .cv-name{font-size:${Math.round(20*r)}px!important}
+    #cv-preview .cv-jobtitle{font-size:${Math.round(10*r)}px!important}
+    #cv-preview .cv-main-heading{font-size:${Math.round(10.5*r)}px!important}
+    #cv-preview .cv-entry-title{font-size:${Math.round(12*r)}px!important}
+    #cv-preview .cv-sidebar-heading{font-size:${Math.round(8.5*r)}px!important}
+    #cv-preview .cv-contact-item,#cv-preview .cv-skill-tag,#cv-preview .cv-skill-soft-tag,#cv-preview .cv-lang-item,#cv-preview .cv-certif-item,#cv-preview .cv-certif-name,#cv-preview .cv-interest-item,#cv-preview .cv-interest-tag{font-size:${Math.round(s)}px!important}
+    #cv-preview .cv-skill-sublabel,#cv-preview .cv-skill-sublabel-mini{font-size:${Math.round(7.5*r)}px!important}
+    #cv-preview .cv-entry-org{font-size:${Math.round(s)}px!important}
+    #cv-preview .cv-entry-dates{font-size:${Math.round(9*r)}px!important}
+    #cv-preview .cv-entry-desc,#cv-preview .cv-bullet-item{font-size:${Math.round(s)}px!important}
   `;
 }
 
@@ -1580,25 +1571,28 @@ function printElement(elements){
   const fo=document.getElementById('cv-font-override');
   const foCSS=fo?fo.textContent:'';
 
-  // CSS d'impression : masquer tout sauf #cv-print-container
   const style=document.createElement('style');
   style.id='cv-print-style';
+  // CORRECTION : Ajout de règles strictes d'overflow pour empêcher la 2ème page blanche
   style.textContent=`
     @media print {
       @page { size: 794px 1123px; margin: 0; }
       * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+      html, body { overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
       body > * { display: none !important; }
-      #cv-print-container { display: block !important; margin: 0 !important; padding: 0 !important; }
+      #cv-print-container { 
+        display: block !important; margin: 0 !important; padding: 0 !important; 
+        width: 794px !important; height: 1123px !important; overflow: hidden !important; 
+      }
       #cv-print-container > * {
         display: flex !important;
         transform: none !important; box-shadow: none !important;
-        overflow: visible !important;
-        min-height: 1123px !important; width: 794px !important;
-        margin: 0 !important;
+        width: 794px !important; height: 1123px !important; max-height: 1123px !important;
+        margin: 0 !important; overflow: hidden !important;
       }
       #cv-print-container .cv-sidebar,
-      #cv-print-container .cv-col-left { min-height: 1123px !important; align-self: stretch !important; }
-      #cv-print-container .cv-main    { min-height: 1123px !important; align-self: stretch !important; }
+      #cv-print-container .cv-col-left { height: 1123px !important; align-self: stretch !important; }
+      #cv-print-container .cv-main { height: 1123px !important; align-self: stretch !important; }
       .cv-print-break { page-break-before: always; break-before: page; display: block !important; height: 0 !important; }
       .cv-drag-handle, .cv-sidebar-drag, .cv-col-left-drag, .cv-empty-hint { display: none !important; }
       ${foCSS}
@@ -1606,14 +1600,12 @@ function printElement(elements){
   `;
   document.head.appendChild(style);
 
-  // Créer un conteneur direct sous body
   const container=document.createElement('div');
   container.id='cv-print-container';
   container.style.cssText='position:absolute;top:0;left:0;pointer-events:none;';
   document.body.appendChild(container);
 
-  // Déplacer les éléments dans le conteneur (les retirer de leur position d'origine)
-  const parents=[]; // mémoriser parent + nextSibling pour restaurer
+  const parents=[]; 
   elements.forEach((el,i)=>{
     parents.push({el, parent:el.parentElement, next:el.nextSibling});
     if(i>0){
@@ -1621,7 +1613,6 @@ function printElement(elements){
       brk.className='cv-print-break';
       container.appendChild(brk);
     }
-    // Retirer les handles drag du clone
     const clone=el.cloneNode(true);
     clone.id=el.id;
     clone.className=el.className;
@@ -1632,7 +1623,6 @@ function printElement(elements){
 
   window.print();
 
-  // Nettoyage
   setTimeout(()=>{
     style.remove();
     container.remove();
