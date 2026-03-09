@@ -1601,24 +1601,24 @@ function loadData(){
   }catch(e){console.error(e);}
 }
 function clearAll(){if(!confirm('Effacer toutes les données ?'))return;localStorage.removeItem('cv_builder_v2');location.reload();}
-// ── IMPRESSION NATIVE FIABLE ──
+// ── IMPRESSION NATIVE FIABLE (SANS BUG FIREFOX) ──
 function preparePrint(showCV, showLettre) {
-  // 1. Désactiver temporairement le zoom pour éviter les bugs de taille
   const currentZoom = zoomLevel;
   zoomLevel = 1;
   applyZoom();
 
-  // 2. Afficher seulement ce qu'on veut exporter
   document.getElementById('cv-wrapper').style.display = showCV ? 'block' : 'none';
   document.getElementById('lettre-wrapper').style.display = showLettre ? 'block' : 'none';
   
-  showToast('💡 Impression native : Choisis "Enregistrer au format PDF"');
+  // HACK FIREFOX LINUX : On s'assure que le popup Toast est détruit physiquement
+  // S'il reste à l'écran, Firefox aplatit tout le CV en une image floue.
+  const toastEl = document.getElementById('toast');
+  if(toastEl) toastEl.style.display = 'none';
   
-  // 3. Imprimer (le CSS @media print fera le reste)
   setTimeout(() => { 
     window.print(); 
     
-    // 4. Restaurer l'affichage normal après la fermeture de la fenêtre d'impression
+    // Restauration de l'affichage
     zoomLevel = currentZoom;
     applyZoom();
     document.getElementById('cv-wrapper').style.display = 'block';
@@ -1630,8 +1630,7 @@ function preparePrint(showCV, showLettre) {
 function exportPDF() { preparePrint(true, false); }
 function exportLettreSeule() { renderLettre(); preparePrint(false, true); }
 function exportCVetLettre() { renderLettre(); preparePrint(true, true); }
-function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22222e;color:#e8e8f0;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid #2e2e3e;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:opacity .3s;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
-
+  
 document.addEventListener('DOMContentLoaded',()=>{
   loadData();applyFontSize();updatePreview();fitZoom();initResize();
   const zone=document.getElementById('photo-upload-zone');
