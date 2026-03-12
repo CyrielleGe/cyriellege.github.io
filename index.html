@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Builder — ATS Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Raleway:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&family=Nunito:wght@300;400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --bg:#0f0f13;--surface:#1a1a22;--surface2:#22222e;--border:#2e2e3e;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#7a7a9a;
+  --cv-sidebar:#1e2235;--cv-accent:#4f7cff;--cv-text:#1a1a2e;
+  --cv-font:'DM Sans',sans-serif;--cv-font-size:11px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:19px;display:flex;align-items:center;gap:8px;}
+.logo span{color:var(--accent);}
+.logo-badge{background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--muted);}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{background:#7c75ff;transform:translateY(-1px);}
+.btn-preview{background:#2a2a38;color:var(--text);border:1px solid var(--border);}
+.btn-preview:hover{background:#32324a;border-color:var(--accent);}
+.btn-danger{background:var(--accent2);color:white;padding:5px 11px;font-size:12px;}
+.app{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.sidebar-section{padding:14px 10px 6px;}
+.sidebar-label{font-size:9.5px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;padding:0 6px;margin-bottom:5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;user-select:none;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(108,99,255,.15);color:var(--accent);}
+.nav-item .icon{font-size:14px;width:18px;text-align:center;}
+.form-area{width:480px;min-width:300px;overflow-y:auto;padding:24px;background:var(--bg);flex-shrink:0;}
+.section-panel{display:none;}
+.section-panel.active{display:block;}
+.panel-title{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin-bottom:5px;}
+.panel-subtitle{color:var(--muted);font-size:12.5px;margin-bottom:20px;}
+.field-group{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:18px;margin-bottom:14px;}
+.field-group-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.field-row{display:flex;gap:10px;margin-bottom:10px;}
+.field-row:last-child{margin-bottom:0;}
+.field{flex:1;display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11.5px;font-weight:600;color:var(--muted);}
+input[type="text"],input[type="email"],input[type="tel"],input[type="url"],textarea,select{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;transition:border-color .15s;width:100%;outline:none;}
+input[type="color"]{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px 5px;height:36px;width:100%;cursor:pointer;outline:none;}
+input[type="range"]{width:100%;accent-color:var(--accent);cursor:pointer;}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:75px;line-height:1.5;}
+select option{background:var(--surface2);}
+.entries-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.entry-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden;transition:border-color .15s;}
+.entry-card:hover{border-color:var(--accent);}
+.entry-header{display:flex;align-items:center;padding:11px 14px;cursor:pointer;user-select:none;}
+.entry-handle{color:var(--muted);font-size:14px;cursor:grab;margin-right:7px;}
+.entry-title-text{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.entry-toggle{color:var(--muted);font-size:11px;transition:transform .2s;margin-left:6px;}
+.entry-toggle.open{transform:rotate(180deg);}
+.entry-body{padding:14px;border-top:1px solid var(--border);display:none;}
+.entry-body.open{display:block;}
+.add-entry-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;background:transparent;border:1px dashed var(--border);border-radius:9px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.add-entry-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.05);}
+.tags-input-wrapper{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px;display:flex;flex-wrap:wrap;gap:5px;cursor:text;min-height:40px;transition:border-color .15s;}
+.tags-input-wrapper:focus-within{border-color:var(--accent);}
+.tag{background:rgba(108,99,255,.2);color:var(--accent);padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tag .tag-remove{cursor:pointer;opacity:.7;font-size:13px;}
+.tag .tag-remove:hover{opacity:1;}
+.tags-input{border:none!important;background:transparent!important;padding:2px 3px!important;font-size:13px!important;flex:1;min-width:80px;}
+.star-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.star-label{font-size:13px;flex:1;color:var(--text);}
+.star-remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;}
+.star-remove-btn:hover{color:var(--accent2);}
+.photo-upload-zone{border:2px dashed var(--border);border-radius:11px;padding:14px;cursor:pointer;transition:all .2s;text-align:center;}
+.photo-upload-zone:hover{border-color:var(--accent);background:rgba(108,99,255,.05);}
+.photo-upload-zone.drag-over{border-color:var(--accent);background:rgba(108,99,255,.1);}
+.photo-upload-placeholder{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--muted);font-size:12.5px;padding:10px 0;}
+.photo-upload-preview img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);display:block;margin:0 auto 7px;}
+.photo-upload-preview .photo-name{font-size:11px;color:var(--muted);text-align:center;}
+.template-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
+.template-card{border:2px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;aspect-ratio:0.7;position:relative;background:white;}
+.template-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(108,99,255,.2);}
+.template-card.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.3);}
+.tpl-check{position:absolute;top:6px;right:6px;background:var(--accent);color:white;border-radius:50%;width:20px;height:20px;display:none;align-items:center;justify-content:center;font-size:11px;}
+.template-card.active .tpl-check{display:flex;}
+.tpl-label{text-align:center;padding:4px 0;font-size:10px;font-weight:700;color:#555;background:white;border-top:1px solid #eee;}
+.color-pair{display:flex;gap:10px;align-items:flex-end;}
+.color-item{display:flex;flex-direction:column;gap:4px;flex:1;}
+.color-item label{font-size:11px;color:var(--muted);font-weight:600;}
+.palette-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.palette-btn{padding:4px 10px;font-size:11px;border-radius:6px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.palette-btn:hover{border-color:var(--accent);color:var(--text);}
+.palette-custom-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+.palette-custom-btn{display:flex;align-items:center;gap:5px;padding:3px 8px;font-size:11px;border-radius:6px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.palette-custom-btn:hover{border-color:var(--accent);color:var(--text);}
+.palette-custom-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.palette-custom-del{margin-left:3px;opacity:.4;font-size:10px;}
+.palette-custom-del:hover{opacity:1;color:var(--accent2);}
+.font-size-row{display:flex;align-items:center;gap:10px;}
+.font-size-val{min-width:34px;text-align:center;font-size:13px;font-weight:700;color:var(--accent);}
+.resize-handle{width:5px;flex-shrink:0;background:var(--border);cursor:col-resize;transition:background .15s;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;}
+.resize-handle:hover,.resize-handle.dragging{background:var(--accent);}
+.resize-handle::after{content:'⋮';position:absolute;color:var(--muted);font-size:14px;}
+.preview-area{flex:1;background:#b0b0be;overflow:auto;display:flex;flex-direction:column;align-items:center;padding:20px;min-width:200px;}
+.preview-toolbar{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0;max-width:800px;}
+.preview-label{font-size:10px;font-weight:700;color:#444;letter-spacing:1px;text-transform:uppercase;}
+.zoom-controls{display:flex;gap:4px;align-items:center;}
+.zoom-btn{background:white;border:1px solid #ccc;border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:#444;}
+.zoom-btn:hover{border-color:var(--accent);color:var(--accent);}
+.zoom-val{font-size:11px;color:#444;min-width:34px;text-align:center;font-weight:600;}
+.cv-page-wrapper{transform-origin:top center;transition:transform .2s;box-shadow:0 8px 40px rgba(0,0,0,.35);flex-shrink:0;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:none;overflow-y:auto;padding:30px 20px;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:block;}
+.modal-cv-wrapper{display:flex;justify-content:center;width:100%;}.modal-cv-inner{transform-origin:top center;box-shadow:0 20px 80px rgba(0,0,0,.6);flex-shrink:0;}
+.modal-close{position:fixed;top:14px;right:16px;background:white;color:#333;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.3);z-index:1001;}
+.modal-close:hover{background:#f0f0f0;}
+.modal-hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.15);color:white;font-size:11px;padding:5px 14px;border-radius:20px;pointer-events:none;}
+
+/* ── CV TEMPLATES ── */
+#cv-preview{width:794px;min-height:1123px;background:white;display:flex;position:relative;font-size:var(--cv-font-size);font-family:var(--cv-font);color:var(--cv-text);box-sizing:border-box;}
+
+/* MODERNE */
+#cv-preview.tpl-moderne .cv-sidebar{width:268px;background:var(--cv-sidebar);color:white;flex-shrink:0;padding:0 0 32px;display:flex;flex-direction:column;}
+#cv-preview.tpl-moderne .cv-photo-block{padding:28px 22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);}
+#cv-preview.tpl-moderne .cv-avatar{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#3a4a7a,var(--cv-accent));border:3px solid rgba(79,124,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:12px;}
+#cv-preview.tpl-moderne .cv-avatar img{width:100%;height:100%;object-fit:cover;}
+#cv-preview.tpl-moderne .cv-avatar-placeholder{font-size:32px;color:rgba(255,255,255,.3);}
+#cv-preview.tpl-moderne .cv-name{font-size:20px;font-weight:700;color:white;line-height:1.2;margin-bottom:4px;}
+#cv-preview.tpl-moderne .cv-jobtitle{font-size:11px;color:var(--cv-accent);font-weight:600;letter-spacing:.5px;}
+#cv-preview.tpl-moderne .cv-sidebar-section{padding:14px 20px 2px;}#cv-preview.tpl-moderne .cv-sidebar-section *{color:white;}
+#cv-preview.tpl-moderne .cv-sidebar-heading{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cv-accent);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid color-mix(in srgb, var(--cv-accent) 40%, transparent);}
+#cv-preview.tpl-moderne .cv-contact-item{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:11px;color:white;line-height:1.4;}
+#cv-preview.tpl-moderne .cv-skill-tag{background:rgba(255,255,255,.07);color:white;font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid rgba(255,255,255,.1);display:inline-block;margin:2px 2px 2px 0;}
+#cv-preview.tpl-moderne .cv-skill-soft-tag{background:rgba(79,124,255,.2);color:#9cb4ff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;display:inline-block;margin:2px 2px 2px 0;}
+#cv-preview.tpl-moderne .cv-lang-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:11px;color:white;}
+#cv-preview.tpl-moderne .cv-lang-level{font-size:9.5px;color:var(--cv-accent);font-weight:600;}
+#cv-preview.tpl-moderne .cv-certif-item{font-size:10.5px;color:white;margin-bottom:8px;line-height:1.4;}
+#cv-preview.tpl-moderne .cv-certif-name{color:#dde3f7;font-size:10.5px;display:block;margin-bottom:1px;}
+#cv-preview.tpl-moderne .cv-certif-meta{font-size:9.5px;color:white;}
+#cv-preview.tpl-moderne .cv-certif-desc{font-size:9.5px;color:white;margin-top:2px;line-height:1.4;}
+#cv-preview.tpl-moderne .cv-skill-soft-tag{background:rgba(255,255,255,.07);color:white;font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid rgba(255,255,255,.1);display:inline-block;margin:2px 2px 2px 0;}#cv-preview.tpl-moderne .cv-interest-tag{background:rgba(255,255,255,.07);color:white;font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid rgba(255,255,255,.1);display:inline-block;margin:2px 2px 2px 0;}
+#cv-preview.tpl-moderne .cv-main{flex:1;padding:28px 26px;background:white;}
+#cv-preview.tpl-moderne .cv-main-heading{font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cv-text);margin-bottom:12px;padding-bottom:5px;border-bottom:2px solid var(--cv-accent);}
+#cv-preview.tpl-moderne .cv-entry-title{font-size:13px;font-weight:700;color:#111;}
+#cv-preview.tpl-moderne .cv-entry-org{font-size:11px;color:var(--cv-accent);font-weight:600;margin-bottom:3px;}
+#cv-preview.tpl-moderne .cv-bullet-item::before{color:var(--cv-accent);}
+
+/* MINIMALISTE */
+#cv-preview.tpl-minimaliste{flex-direction:column;}
+#cv-preview.tpl-minimaliste .cv-sidebar{display:none;}
+#cv-preview.tpl-minimaliste .cv-main{padding:38px 46px;width:100%;}
+#cv-preview.tpl-minimaliste .cv-top-block{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;margin-bottom:22px;border-bottom:2px solid var(--cv-text);}
+#cv-preview.tpl-minimaliste .cv-top-left{display:flex;align-items:center;gap:14px;}
+#cv-preview.tpl-minimaliste .cv-avatar{width:68px;height:68px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#ddd,#bbb);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#cv-preview.tpl-minimaliste .cv-avatar img{width:100%;height:100%;object-fit:cover;}
+#cv-preview.tpl-minimaliste .cv-avatar-placeholder{font-size:24px;color:#ccc;}
+#cv-preview.tpl-minimaliste .cv-name{font-size:24px;font-weight:700;color:var(--cv-text);line-height:1.1;margin-bottom:3px;}
+#cv-preview.tpl-minimaliste .cv-jobtitle{font-size:11px;color:var(--cv-accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+#cv-preview.tpl-minimaliste .cv-top-contact{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+#cv-preview.tpl-minimaliste .cv-contact-item{font-size:10.5px;color:#555;}
+#cv-preview.tpl-minimaliste .cv-two-col{display:flex;gap:28px;}
+#cv-preview.tpl-minimaliste .cv-col-left{width:190px;flex-shrink:0;}
+#cv-preview.tpl-minimaliste .cv-col-right{flex:1;}
+#cv-preview.tpl-minimaliste .cv-main-heading{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cv-text);margin-bottom:9px;padding-bottom:4px;border-bottom:1.5px solid var(--cv-accent);}
+#cv-preview.tpl-minimaliste .cv-skill-tag{display:inline-block;background:#f4f4f8;color:#555;font-size:9.5px;padding:2px 6px;border-radius:3px;margin:1px 2px 1px 0;}
+#cv-preview.tpl-minimaliste .cv-skill-soft-tag{display:inline-block;background:#f4f4f8;color:#444;font-size:9.5px;padding:2px 6px;border-radius:3px;margin:1px 2px 1px 0;}
+#cv-preview.tpl-minimaliste .cv-lang-item{font-size:10.5px;color:#333;margin-bottom:4px;display:flex;justify-content:space-between;}
+#cv-preview.tpl-minimaliste .cv-lang-level{font-size:9px;color:var(--cv-accent);font-weight:600;}
+#cv-preview.tpl-minimaliste .cv-certif-item{font-size:10px;color:#444;margin-bottom:8px;line-height:1.4;}
+#cv-preview.tpl-minimaliste .cv-certif-name{color:#111;font-size:10.5px;display:block;margin-bottom:1px;}
+#cv-preview.tpl-minimaliste .cv-certif-meta{font-size:9px;color:#ccc;}
+#cv-preview.tpl-minimaliste .cv-certif-desc{font-size:9px;color:#bbb;margin-top:2px;line-height:1.4;}
+#cv-preview.tpl-minimaliste .cv-skill-soft-tag{display:inline-block;background:#f4f4f8;color:#555;font-size:9.5px;padding:2px 6px;border-radius:3px;margin:1px 2px 1px 0;}#cv-preview.tpl-minimaliste .cv-interest-tag{display:inline-block;background:#f4f4f8;color:#555;font-size:9.5px;padding:2px 6px;border-radius:3px;margin:1px 2px 1px 0;}
+#cv-preview.tpl-minimaliste .cv-entry-title{font-size:12px;font-weight:700;color:#111;}
+#cv-preview.tpl-minimaliste .cv-entry-org{font-size:10.5px;color:var(--cv-accent);font-weight:600;margin-bottom:2px;}
+#cv-preview.tpl-minimaliste .cv-bullet-item::before{color:var(--cv-accent);}
+
+/* COLORE */
+#cv-preview.tpl-colore .cv-sidebar{width:256px;background:var(--cv-sidebar);color:white;flex-shrink:0;padding:0 0 32px;display:flex;flex-direction:column;border-right:4px solid var(--cv-accent);}
+#cv-preview.tpl-colore .cv-photo-block{padding:28px 20px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;}
+#cv-preview.tpl-colore .cv-photo-block::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--cv-accent) 50%,transparent 50%);z-index:0;}
+#cv-preview.tpl-colore .cv-photo-block > *{position:relative;z-index:1;}
+#cv-preview.tpl-colore .cv-avatar{width:88px;height:88px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.3);border:3px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+#cv-preview.tpl-colore .cv-avatar img{width:100%;height:100%;object-fit:cover;}
+#cv-preview.tpl-colore .cv-avatar-placeholder{font-size:30px;color:rgba(255,255,255,.6);}
+#cv-preview.tpl-colore .cv-name{font-size:18px;font-weight:700;color:white;line-height:1.2;margin-bottom:3px;}
+#cv-preview.tpl-colore .cv-jobtitle{font-size:10.5px;color:rgba(255,255,255,.85);font-weight:500;}
+#cv-preview.tpl-colore .cv-sidebar-section{padding:13px 17px 2px;}#cv-preview.tpl-colore .cv-sidebar-section *{color:white;}
+#cv-preview.tpl-colore .cv-sidebar-heading{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cv-accent);margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid color-mix(in srgb, var(--cv-accent) 40%, transparent);}
+#cv-preview.tpl-colore .cv-contact-item{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;font-size:10.5px;color:white;}
+#cv-preview.tpl-colore .cv-skill-tag{background:rgba(255,255,255,.1);color:white;font-size:10px;padding:2px 7px;border-radius:3px;display:inline-block;margin:2px 2px 2px 0;}
+#cv-preview.tpl-colore .cv-skill-soft-tag{background:rgba(255,255,255,.15);color:white;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;display:inline-block;margin:2px 2px 2px 0;border:1px solid rgba(255,255,255,.2);}
+#cv-preview.tpl-colore .cv-lang-item{display:flex;justify-content:space-between;margin-bottom:5px;font-size:10.5px;color:white;}
+#cv-preview.tpl-colore .cv-lang-level{font-size:9px;color:var(--cv-accent);font-weight:600;}
+#cv-preview.tpl-colore .cv-certif-item{font-size:10px;color:white;margin-bottom:8px;line-height:1.4;}
+#cv-preview.tpl-colore .cv-certif-name{color:white;font-size:10.5px;display:block;margin-bottom:1px;}
+#cv-preview.tpl-colore .cv-certif-meta{font-size:9.5px;color:white;}
+#cv-preview.tpl-colore .cv-certif-desc{font-size:9px;color:white;margin-top:2px;line-height:1.4;}
+#cv-preview.tpl-colore .cv-skill-soft-tag{background:rgba(255,255,255,.1);color:white;font-size:10px;padding:2px 7px;border-radius:3px;display:inline-block;margin:2px 2px 2px 0;}#cv-preview.tpl-colore .cv-interest-tag{background:rgba(255,255,255,.1);color:white;font-size:10px;padding:2px 7px;border-radius:3px;display:inline-block;margin:2px 2px 2px 0;}
+#cv-preview.tpl-colore .cv-main{flex:1;padding:28px 26px;background:white;}
+#cv-preview.tpl-colore .cv-main-heading{font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cv-text);margin-bottom:12px;padding-bottom:5px;border-bottom:2px solid var(--cv-accent);}
+#cv-preview.tpl-colore .cv-entry-title{font-size:13px;font-weight:700;color:#111;}
+#cv-preview.tpl-colore .cv-entry-org{font-size:11px;color:var(--cv-accent);font-weight:600;margin-bottom:3px;}
+#cv-preview.tpl-colore .cv-bullet-item::before{color:var(--cv-accent);}
+
+/* SHARED */
+.cv-main-section{margin-bottom:20px;position:relative;}
+.cv-entry{margin-bottom:12px;}
+.cv-entry:last-child{margin-bottom:0;}
+.cv-entry-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1px;}
+.cv-entry-dates{font-size:10px;color:#888;white-space:nowrap;margin-left:8px;}
+.cv-entry-desc{font-size:11px;color:#444;line-height:1.5;margin-top:3px;}
+.cv-bullet-list{list-style:none;margin-top:4px;}
+.cv-bullet-item{font-size:10.5px;color:#444;padding-left:12px;position:relative;line-height:1.5;margin-bottom:2px;}
+.cv-bullet-item::before{content:'▸';position:absolute;left:0;font-size:9px;top:2px;}
+.cv-empty-hint{font-size:10px;color:#bbb;font-style:italic;}
+.cv-skill-sublabel{font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px;}
+.cv-skill-sublabel-mini{font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#999;margin-bottom:3px;}
+.cv-drag-handle{position:absolute;left:-18px;top:2px;font-size:13px;color:#bbb;cursor:grab;opacity:0;transition:opacity .15s;user-select:none;}
+.cv-main-section:hover .cv-drag-handle{opacity:1;}
+.cv-sidebar-section{position:relative;}
+.cv-sidebar-drag{position:absolute;left:4px;top:50%;transform:translateY(-50%);font-size:11px;color:rgba(255,255,255,.2);cursor:grab;opacity:0;transition:opacity .15s;user-select:none;line-height:1;}
+.cv-sidebar-section:hover .cv-sidebar-drag{opacity:1;}
+.cv-sidebar-sortable-ghost{opacity:.3;outline:1px dashed rgba(255,255,255,.4);border-radius:4px;}
+.cv-col-left-drag{font-size:11px;color:#ccc;cursor:grab;opacity:0;transition:opacity .15s;user-select:none;margin-right:4px;float:left;margin-top:2px;}
+.cv-main-section:hover .cv-col-left-drag{opacity:1;}
+.cv-sortable-ghost{opacity:.3;outline:2px dashed var(--cv-accent);border-radius:4px;}
+.sortable-ghost{opacity:.35;background:rgba(108,99,255,.08);border:2px dashed var(--accent)!important;border-radius:11px;}
+
+/* ══════════════════════════
+   LETTRE DE MOTIVATION
+══════════════════════════ */
+#lettre-preview {
+  width: 794px; min-height: 1123px; background: white;
+  font-family: var(--cv-font); font-size: var(--cv-font-size);
+  color: var(--cv-text); position: relative; box-sizing: border-box;
+}
+
+/* MODERNE */
+#lettre-preview.lettre-tpl-moderne {
+  display: flex; flex-direction: column;
+}
+#lettre-preview.lettre-tpl-moderne .lm-header {
+  background: var(--cv-sidebar); color: #dde3f7;
+  padding: 22px 32px; display: flex; justify-content: space-between; align-items: center;
+}
+#lettre-preview.lettre-tpl-moderne .lm-header-name {
+  font-size: 18px; font-weight: 700; color: white; line-height: 1.2;
+}
+#lettre-preview.lettre-tpl-moderne .lm-header-title {
+  font-size: 11px; color: var(--cv-accent); font-weight: 600; margin-top: 3px;
+}
+#lettre-preview.lettre-tpl-moderne .lm-header-contact {
+  text-align: right; font-size: 10px; color: #bbc6e8; line-height: 1.8;
+}
+#lettre-preview.lettre-tpl-moderne .lm-accent-bar {
+  height: 4px; background: var(--cv-accent);
+}
+#lettre-preview.lettre-tpl-moderne .lm-body {
+  padding: 36px 48px; flex: 1;
+}
+
+/* MINIMALISTE */
+#lettre-preview.lettre-tpl-minimaliste { display: flex; flex-direction: column; }
+#lettre-preview.lettre-tpl-minimaliste .lm-header {
+  padding: 36px 46px 18px; border-bottom: 2px solid var(--cv-text);
+  display: flex; justify-content: space-between; align-items: flex-end;
+}
+#lettre-preview.lettre-tpl-minimaliste .lm-header-name {
+  font-size: 22px; font-weight: 700; color: var(--cv-text);
+}
+#lettre-preview.lettre-tpl-minimaliste .lm-header-title {
+  font-size: 11px; color: var(--cv-accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-top: 3px;
+}
+#lettre-preview.lettre-tpl-minimaliste .lm-header-contact {
+  text-align: right; font-size: 10px; color: #555; line-height: 1.8;
+}
+#lettre-preview.lettre-tpl-minimaliste .lm-body {
+  padding: 32px 46px; flex: 1;
+}
+
+/* COLORÉ */
+#lettre-preview.lettre-tpl-colore { display: flex; flex-direction: column; }
+#lettre-preview.lettre-tpl-colore .lm-header {
+  background: var(--cv-accent); padding: 24px 36px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+#lettre-preview.lettre-tpl-colore .lm-header-name {
+  font-size: 20px; font-weight: 700; color: white;
+}
+#lettre-preview.lettre-tpl-colore .lm-header-title {
+  font-size: 11px; color: rgba(255,255,255,.85); font-weight: 500; margin-top: 3px;
+}
+#lettre-preview.lettre-tpl-colore .lm-header-contact {
+  text-align: right; font-size: 10px; color: rgba(255,255,255,.8); line-height: 1.8;
+}
+#lettre-preview.lettre-tpl-colore .lm-sidebar-strip {
+  width: 8px; background: var(--cv-sidebar); position: absolute; left: 0; top: 0; bottom: 0;
+}
+#lettre-preview.lettre-tpl-colore .lm-body {
+  padding: 32px 48px 32px 48px; flex: 1;
+}
+
+/* CORPS COMMUN */
+.lm-meta-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+}
+.lm-dest-block { font-size: 11px; color: #333; line-height: 1.7; }
+.lm-dest-entreprise { font-weight: 700; font-size: 12px; color: var(--cv-text); }
+.lm-date-block { font-size: 11px; color: #666; text-align: right; }
+.lm-objet { font-size: 12px; margin-bottom: 22px; line-height: 1.5; }
+.lm-objet strong { color: var(--cv-text); }
+.lm-appel { font-size: 12px; margin-bottom: 16px; color: var(--cv-text); }
+.lm-corps-text {
+  font-size: 12px; line-height: 1.8; color: #333;
+  white-space: pre-wrap; margin-bottom: 28px;
+}
+.lm-politesse { font-size: 12px; line-height: 1.7; color: #333; margin-bottom: 32px; }
+.lm-signature { font-size: 13px; font-weight: 700; color: var(--cv-text); }
+
+.cv-qr-block{display:flex;flex-direction:column;align-items:center;margin-top:10px;padding-top:8px;}
+.cv-qr-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;opacity:.6;}
+.cv-qr-block canvas,.cv-qr-block img{border-radius:4px;}
+
+/* ── IMPRESSION / EXPORT PDF ── */
+
+
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span>CV</span>Builder <div class="logo-badge">ATS PRO</div></div>
+  <div class="header-actions">
+    <button class="btn btn-preview" onclick="openModal()">👁 Prévisualiser</button>
+    <button class="btn btn-ghost" onclick="clearAll()">🗑 Effacer</button>
+    <button class="btn btn-ghost" onclick="saveData()">💾 Sauvegarder</button>
+    <button class="btn btn-ghost" onclick="exportJSON()" title="Exporter toutes les données en fichier JSON (pour sauvegarder ou transférer vers une nouvelle version)">📤 Exporter données</button>
+    <label class="btn btn-ghost" style="cursor:pointer" title="Importer un fichier JSON exporté précédemment">📥 Importer données<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>
+    <button class="btn btn-primary" onclick="exportPDF()">⬇ Exporter CV en PDF</button>
+  </div>
+</header>
+<div class="app">
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Général</div>
+      <div class="nav-item active" onclick="showPanel('informations')" id="nav-informations"><span class="icon">📋</span> Informations</div>
+      <div class="nav-item" onclick="showPanel('personnaliser')" id="nav-personnaliser"><span class="icon">🎨</span> Personnaliser</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Colonne gauche</div>
+      <div class="nav-item" onclick="showPanel('competences')" id="nav-competences"><span class="icon">⚙️</span> Compétences</div>
+      <div class="nav-item" onclick="showPanel('langues')" id="nav-langues"><span class="icon">🌐</span> Langues</div>
+      <div class="nav-item" onclick="showPanel('certifications')" id="nav-certifications"><span class="icon">🏅</span> Certifications</div>
+      <div class="nav-item" onclick="showPanel('interets')" id="nav-interets"><span class="icon">✨</span> Centres d'intérêt</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Colonne droite</div>
+      <div class="nav-item" onclick="showPanel('formations')" id="nav-formations"><span class="icon">🎓</span> Formations</div>
+      <div class="nav-item" onclick="showPanel('experiences')" id="nav-experiences"><span class="icon">💼</span> Expériences pro</div>
+      <div class="nav-item" onclick="showPanel('associations')" id="nav-associations"><span class="icon">🤝</span> Expériences asso.</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Personnalisé</div>
+      <div class="nav-item" onclick="showPanel('custom-gauche')" id="nav-custom-gauche"><span class="icon">➕</span> Sections gauche</div>
+      <div class="nav-item" onclick="showPanel('custom-droite')" id="nav-custom-droite"><span class="icon">➕</span> Sections droite</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Documents</div>
+      <div class="nav-item" onclick="showPanel('lettre')" id="nav-lettre"><span class="icon">✉️</span> Lettre de motivation</div>
+    </div>
+  </nav>
+  <div class="form-area" id="form-area">
+
+    <!-- INFORMATIONS -->
+    <div class="section-panel active" id="panel-informations">
+      <div class="panel-title">Informations</div>
+      <div class="panel-subtitle">Photo, identité et coordonnées de contact.</div>
+      <div class="field-group">
+        <div class="field-group-title">📸 Photo de profil</div>
+        <div class="photo-upload-zone" id="photo-upload-zone" onclick="document.getElementById('photo-file-input').click()">
+          <div class="photo-upload-preview" id="photo-upload-preview">
+            <div class="photo-upload-placeholder">
+              <span style="font-size:28px">🖼️</span>
+              <span>Clique ou glisse une photo ici</span>
+              <span style="font-size:11px;color:var(--muted)">JPG, PNG, WEBP — photo carrée recommandée</span>
+            </div>
+          </div>
+          <input type="file" id="photo-file-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <input type="url" id="photo_url" placeholder="Ou colle une URL de photo..." oninput="updatePreview()">
+          <button class="btn btn-ghost" onclick="clearPhoto()" style="white-space:nowrap;padding:7px 11px;font-size:12px">✕</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-group-title">👤 Identité</div>
+        <div class="field-row">
+          <div class="field"><label>Prénom</label><input type="text" id="prenom" placeholder="Sophie" oninput="updatePreview()"></div>
+          <div class="field"><label>Nom</label><input type="text" id="nom" placeholder="Martin" oninput="updatePreview()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Titre / Poste visé</label><input type="text" id="titre" placeholder="ex: Développeuse Full Stack" oninput="updatePreview()"></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-group-title">📍 Contact</div>
+        <div class="field-row">
+          <div class="field"><label>📞 Téléphone</label><input type="tel" id="tel" placeholder="+33 6 00 00 00 00" oninput="updatePreview()"></div>
+          <div class="field"><label>📧 Email</label><input type="email" id="email" placeholder="nom@email.com" oninput="updatePreview()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>📍 Ville, Pays</label><input type="text" id="location" placeholder="Paris, France" oninput="updatePreview()"></div>
+          <div class="field"><label>🎂 Âge (optionnel)</label><input type="text" id="age" placeholder="26 ans" oninput="updatePreview()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>🌍 Nationalité (optionnel)</label><input type="text" id="nationalite" placeholder="Française" oninput="updatePreview()"></div>
+          <div class="field"><label>🪪 Permis (optionnel)</label><input type="text" id="permis" placeholder="Permis B" oninput="updatePreview()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>🔗 LinkedIn</label><input type="text" id="linkedin" placeholder="linkedin.com/in/votre-profil" oninput="updatePreview()"></div>
+          <div class="field"><label>💻 GitHub</label><input type="text" id="github" placeholder="github.com/votre-compte" oninput="updatePreview()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>🌐 Autre lien (optionnel)</label><input type="text" id="autrelien" placeholder="portfolio.com, monsite.fr..." oninput="updatePreview()"></div>
+        </div>
+        <div class="field-row" style="align-items:center;gap:12px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);cursor:pointer">
+            <input type="checkbox" id="qr-linkedin" style="width:auto;accent-color:var(--accent)" onchange="updatePreview()">
+            Ajouter un QR code LinkedIn dans la sidebar
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONNALISER -->
+    <div class="section-panel" id="panel-personnaliser">
+      <div class="panel-title">Personnaliser</div>
+      <div class="panel-subtitle">Choisis un modèle, des couleurs et une typographie.</div>
+      <div class="field-group">
+        <div class="field-group-title">🖼 Modèle de CV</div>
+        <div class="template-grid">
+          <div class="template-card active" id="tpl-btn-moderne" onclick="setTemplate('moderne')">
+            <div style="display:flex;height:calc(100% - 26px);background:white;">
+              <div style="width:38%;background:#1e2235;"></div>
+              <div style="flex:1;padding:6px 5px;">
+                <div style="height:4px;background:#4f7cff;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:90%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:1px;background:#ddd;margin:5px 0"></div>
+                <div style="height:4px;background:#4f7cff;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:90%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;width:60%"></div>
+              </div>
+            </div>
+            <div class="tpl-check">✓</div>
+            <div class="tpl-label">Moderne</div>
+          </div>
+          <div class="template-card" id="tpl-btn-minimaliste" onclick="setTemplate('minimaliste')">
+            <div style="height:calc(100% - 26px);background:white;padding:6px;">
+              <div style="border-bottom:2px solid #111;padding-bottom:4px;margin-bottom:5px;">
+                <div style="font-size:7px;font-weight:700;color:#111;letter-spacing:.5px">PRENOM NOM</div>
+                <div style="height:2px;background:#4f7cff;border-radius:1px;width:50%;margin-top:2px"></div>
+              </div>
+              <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:80%"></div>
+              <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:60%"></div>
+              <div style="height:3px;background:#4f7cff;border-radius:2px;margin-bottom:3px;width:50%;margin-top:6px"></div>
+              <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:90%"></div>
+              <div style="height:3px;background:#eee;border-radius:2px;width:70%"></div>
+            </div>
+            <div class="tpl-check">✓</div>
+            <div class="tpl-label">Minimaliste</div>
+          </div>
+          <div class="template-card" id="tpl-btn-colore" onclick="setTemplate('colore')">
+            <div style="display:flex;height:calc(100% - 26px);background:white;">
+              <div id="tpl-mini-sidebar" style="width:38%;background:#4f7cff;border-right:3px solid #4f7cff;"></div>
+              <div style="flex:1;padding:6px 5px;">
+                <div id="tpl-mini-acc1" style="height:4px;background:#4f7cff;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:90%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:1px;background:#ddd;margin:5px 0"></div>
+                <div id="tpl-mini-acc2" style="height:4px;background:#4f7cff;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:3px;background:#eee;border-radius:2px;width:80%"></div>
+              </div>
+            </div>
+            <div class="tpl-check">✓</div>
+            <div class="tpl-label">Coloré</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-group-title">🎨 Couleurs</div>
+        <div class="color-pair">
+          <div class="color-item"><label>Couleur principale (sidebar)</label><input type="color" id="color-sidebar" value="#1e2235" oninput="applyColors()"></div>
+          <div class="color-item"><label>Couleur d'accentuation</label><input type="color" id="color-accent" value="#4f7cff" oninput="applyColors()"></div>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);font-weight:700;margin-top:12px;margin-bottom:5px;letter-spacing:.5px;">PALETTES PRÉDÉFINIES</div>
+        <div class="palette-row">
+          <button class="palette-btn" onclick="setPalette('#1e2235','#4f7cff')">🔵 Bleu nuit</button>
+          <button class="palette-btn" onclick="setPalette('#1a2e1a','#27ae60')">🟢 Forêt</button>
+          <button class="palette-btn" onclick="setPalette('#2d1b2e','#9b59b6')">🟣 Violet</button>
+          <button class="palette-btn" onclick="setPalette('#1a1a1a','#e74c3c')">🔴 Minuit</button>
+          <button class="palette-btn" onclick="setPalette('#1a2535','#e67e22')">🟠 Ambre</button>
+          <button class="palette-btn" onclick="setPalette('#2c2c3e','#1abc9c')">🩵 Teal</button>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);font-weight:700;margin-top:14px;margin-bottom:5px;letter-spacing:.5px;">MES PALETTES</div>
+        <div class="palette-custom-row" id="custom-palettes-row"><span style="font-size:11px;color:var(--muted);font-style:italic;">Aucune palette sauvegardée</span></div>
+        <button class="btn btn-ghost" style="margin-top:7px;font-size:11px;padding:5px 12px;" onclick="saveCurrentPalette()">＋ Sauvegarder la palette actuelle</button>
+      </div>
+      <div class="field-group">
+        <div class="field-group-title">✍️ Typographie</div>
+        <div class="field-row">
+          <div class="field"><label>Police du CV</label>
+            <select id="cv-font-select" onchange="applyFont()">
+              <option value="'DM Sans', sans-serif">DM Sans (défaut)</option>
+              <option value="'Inter', sans-serif">Inter</option>
+              <option value="'Lato', sans-serif">Lato</option>
+              <option value="'Raleway', sans-serif">Raleway</option>
+              <option value="'Nunito', sans-serif">Nunito</option>
+              <option value="'Outfit', sans-serif">Outfit</option>
+              <option value="'Merriweather', serif">Merriweather (serif)</option>
+              <option value="Georgia, serif">Georgia (serif)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Taille de police</label>
+            <div class="font-size-row">
+              <span style="font-size:10px;color:var(--muted)">A</span>
+              <input type="range" id="font-size-range" min="10" max="16" step="0.5" value="11" oninput="applyFontSize()">
+              <span style="font-size:16px;color:var(--muted)">A</span>
+              <span class="font-size-val" id="font-size-val">13px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPETENCES -->
+    <div class="section-panel" id="panel-competences">
+      <div class="panel-title">Compétences</div>
+      <div class="panel-subtitle">Ajoute tes compétences une par une. Réordonne-les avec ⠿.</div>
+      <div class="field-group">
+        <div class="field-group-title">🔧 Compétences techniques</div>
+        <div class="entries-list" id="tech-list"></div>
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Compétence technique</label><input type="text" id="new-tech" placeholder="ex: Python, Docker, React..."></div>
+          <button class="btn btn-primary" style="margin-top:auto;padding:8px 14px" onclick="addSkill('tech')">+ Ajouter</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-group-title">🎯 Soft skills</div>
+        <div class="entries-list" id="soft-list"></div>
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Soft skill</label><input type="text" id="new-soft" placeholder="ex: Leadership, Agile, Communication..."></div>
+          <button class="btn btn-primary" style="margin-top:auto;padding:8px 14px" onclick="addSkill('soft')">+ Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANGUES -->
+    <div class="section-panel" id="panel-langues">
+      <div class="panel-title">Langues</div>
+      <div class="panel-subtitle">Ajoute chaque langue avec son niveau.</div>
+      <div class="field-group">
+        <div id="langues-list"></div>
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Langue</label><input type="text" id="new-lang-name" placeholder="Anglais"></div>
+          <div class="field"><label>Niveau</label>
+            <select id="new-lang-level">
+              <option>Langue maternelle</option><option>Bilingue (C2)</option>
+              <option>Courant (C1)</option><option>Avancé (B2)</option>
+              <option>Intermédiaire (B1)</option><option>Débutant (A2)</option>
+            </select>
+          </div>
+          <div class="field" style="justify-content:flex-end"><label>&nbsp;</label>
+            <button class="btn btn-primary" onclick="addLangue()">+ Ajouter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATIONS -->
+    <div class="section-panel" id="panel-certifications">
+      <div class="panel-title">Certifications</div>
+      <div class="panel-subtitle">Ajoute tes certifications et cours professionnels.</div>
+      <div class="entries-list" id="certifs-list"></div>
+      <button class="add-entry-btn" onclick="addCertif()">+ Ajouter une certification</button>
+    </div>
+
+    <!-- INTERETS -->
+    <div class="section-panel" id="panel-interets">
+      <div class="panel-title">Centres d'intérêt</div>
+      <div class="panel-subtitle">Ajoute chaque centre d'intérêt un par un.</div>
+      <div class="field-group">
+        <div class="entries-list" id="interets-list"></div>
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Centre d'intérêt</label><input type="text" id="new-interet" placeholder="ex: Cybersécurité, Musique, Voyages..."></div>
+          <button class="btn btn-primary" style="margin-top:auto;padding:8px 14px" onclick="addInteret()">+ Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMATIONS -->
+    <div class="section-panel" id="panel-formations">
+      <div class="panel-title">Formations</div>
+      <div class="panel-subtitle">Du diplôme le plus récent au plus ancien.</div>
+      <div class="entries-list" id="formations-list"></div>
+      <button class="add-entry-btn" onclick="addEntry('formations')">+ Ajouter une formation</button>
+    </div>
+
+    <!-- EXPERIENCES -->
+    <div class="section-panel" id="panel-experiences">
+      <div class="panel-title">Expériences professionnelles</div>
+      <div class="panel-subtitle">Du poste le plus récent au plus ancien.</div>
+      <div class="entries-list" id="experiences-list"></div>
+      <button class="add-entry-btn" onclick="addEntry('experiences')">+ Ajouter une expérience</button>
+    </div>
+
+    <!-- ASSOCIATIONS -->
+    <div class="section-panel" id="panel-associations">
+      <div class="panel-title">Expériences associatives</div>
+      <div class="panel-subtitle">Engagements, bénévolat, projets.</div>
+      <div class="entries-list" id="associations-list"></div>
+      <button class="add-entry-btn" onclick="addEntry('associations')">+ Ajouter une expérience</button>
+    </div>
+    <!-- SECTIONS PERSONNALISÉES GAUCHE -->
+    <div class="section-panel" id="panel-custom-gauche">
+      <div class="panel-title">Sections personnalisées</div>
+      <div class="panel-subtitle">Ajoute des sections sur mesure dans la colonne gauche du CV.</div>
+      <div class="entries-list" id="custom-gauche-list"></div>
+      <button class="add-entry-btn" onclick="addCustomSection('gauche')">+ Ajouter une section</button>
+    </div>
+
+    <!-- SECTIONS PERSONNALISÉES DROITE -->
+    <div class="section-panel" id="panel-custom-droite">
+      <div class="panel-title">Sections personnalisées</div>
+      <div class="panel-subtitle">Ajoute des sections sur mesure dans la colonne droite du CV.</div>
+      <div class="entries-list" id="custom-droite-list"></div>
+      <button class="add-entry-btn" onclick="addCustomSection('droite')">+ Ajouter une section</button>
+    </div>
+
+    <!-- LETTRE DE MOTIVATION -->
+    <div class="section-panel" id="panel-lettre">
+      <div class="panel-title">Lettre de motivation</div>
+      <div class="panel-subtitle">Rédige ta lettre — la mise en page s'adapte au modèle de CV choisi.</div>
+
+      <div class="field-group">
+        <div class="field-group-title">📬 Destinataire</div>
+        <div class="field-row">
+          <div class="field"><label>Nom du contact / Recruteur</label>
+            <input type="text" id="lm-dest-nom" placeholder="M. Dupont (optionnel)" oninput="updateLettre()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Entreprise</label>
+            <input type="text" id="lm-dest-entreprise" placeholder="Google France" oninput="updateLettre()">
+          </div>
+          <div class="field"><label>Ville de l'entreprise</label>
+            <input type="text" id="lm-dest-ville" placeholder="Paris" oninput="updateLettre()">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">📝 Lettre</div>
+        <div class="field-row">
+          <div class="field"><label>Ville d'envoi + date</label>
+            <input type="text" id="lm-date" placeholder="Paris, le 8 mars 2026" oninput="updateLettre()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Objet</label>
+            <input type="text" id="lm-objet" placeholder="Candidature au poste de Développeur Full Stack" oninput="updateLettre()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Formule d'appel</label>
+            <select id="lm-appel" onchange="updateLettre()">
+              <option value="Madame, Monsieur,">Madame, Monsieur,</option>
+              <option value="Madame,">Madame,</option>
+              <option value="Monsieur,">Monsieur,</option>
+              <option value="Madame la Directrice,">Madame la Directrice,</option>
+              <option value="Monsieur le Directeur,">Monsieur le Directeur,</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Corps de la lettre</label>
+            <textarea id="lm-corps" style="min-height:220px;line-height:1.7"
+              placeholder="Actuellement étudiant(e) en Master Informatique à l'Université Paris-Saclay, je me permets de vous adresser ma candidature pour le poste de Développeur Full Stack au sein de votre entreprise.
+
+Passionné(e) par le développement web et fort(e) d'une expérience de deux ans en stage, j'ai acquis des compétences solides en React, Node.js et Python. Votre entreprise m'attire particulièrement pour...
+
+Convaincu(e) de pouvoir apporter une contribution significative à votre équipe, je reste disponible pour un entretien à votre convenance."
+              oninput="updateLettre()"></textarea>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Formule de politesse</label>
+            <select id="lm-politesse" onchange="updateLettre()">
+              <option value="Dans l'attente de votre réponse, veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées.">Salutations distinguées</option>
+              <option value="Dans l'attente de votre réponse, je vous prie d'agréer, Madame, Monsieur, mes respectueuses salutations.">Respectueuses salutations</option>
+              <option value="Restant à votre disposition pour tout entretien, veuillez agréer, Madame, Monsieur, l'expression de mes sentiments distingués.">Sentiments distingués</option>
+              <option value="En espérant que ma candidature retiendra votre attention, je vous adresse mes cordiales salutations.">Cordiales salutations</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">⚙️ Options d'export</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="exportLettreSeule()">⬇ Exporter la lettre en PDF</button>
+          <button class="btn btn-ghost" onclick="exportCVetLettre()">⬇ Exporter CV + Lettre (2 pages)</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-area -->
+
+  <div class="resize-handle" id="resize-handle"></div>
+
+  <div class="preview-area" id="preview-area">
+    <div class="preview-toolbar">
+      <div class="preview-label">📄 Aperçu en temps réel</div>
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="setZoom(-0.05)">−</button>
+        <span class="zoom-val" id="zoom-val">55%</span>
+        <button class="zoom-btn" onclick="setZoom(0.05)">+</button>
+        <button class="zoom-btn" onclick="fitZoom()" style="width:auto;padding:0 8px;font-size:10px;font-weight:600;">Fit</button>
+      </div>
+    </div>
+    <div class="cv-page-wrapper" id="cv-wrapper">
+      <div id="cv-preview" class="tpl-moderne">
+        <div class="cv-sidebar">
+          <div class="cv-photo-block">
+            <div class="cv-avatar" id="cv-avatar"><div class="cv-avatar-placeholder">👤</div></div>
+            <div class="cv-name" id="cv-full-name">Prénom Nom</div>
+            <div class="cv-jobtitle" id="cv-title-display">Titre / Poste visé</div>
+          </div>
+          <div class="cv-sidebar-section"><span class="cv-sidebar-drag">⠿</span>
+            <div class="cv-sidebar-heading">Contact</div>
+            <div id="cv-contact-list"><div class="cv-contact-item cv-empty-hint">Remplis le contact...</div></div>
+            <div id="cv-qr-block" class="cv-qr-block" style="display:none"><div class="cv-qr-label">LinkedIn</div><div id="cv-qr-canvas"></div></div>
+          </div>
+          <div class="cv-sidebar-section"><span class="cv-sidebar-drag">⠿</span>
+            <div class="cv-sidebar-heading">Compétences</div>
+            <div id="cv-skills-block">
+              <div id="cv-tech-block" style="margin-bottom:7px">
+                <div class="cv-skill-sublabel" id="cv-tech-sublabel">Techniques</div>
+                <div id="cv-tech-tags"></div>
+              </div>
+              <div id="cv-soft-block">
+                <div class="cv-skill-sublabel" id="cv-soft-sublabel">Soft skills</div>
+                <div id="cv-soft-tags"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cv-sidebar-section"><span class="cv-sidebar-drag">⠿</span>
+            <div class="cv-sidebar-heading">Langues</div>
+            <div id="cv-langs"><div class="cv-empty-hint">Ajoute des langues...</div></div>
+          </div>
+          <div class="cv-sidebar-section" id="cv-certif-section" style="display:none"><span class="cv-sidebar-drag">⠿</span>
+            <div class="cv-sidebar-heading">Certifications</div>
+            <div id="cv-certifs"></div>
+          </div>
+          <div class="cv-sidebar-section" id="cv-interest-section" style="display:none"><span class="cv-sidebar-drag">⠿</span>
+            <div class="cv-sidebar-heading">Centres d'intérêt</div>
+            <div id="cv-interests"></div>
+          </div>
+          <div id="cv-custom-gauche-sections"></div>
+        </div>
+        <div class="cv-main" id="cv-main-col">
+          <!-- Minimaliste top (hidden by default) -->
+          <div id="cv-mini-top" style="display:none">
+            <div class="cv-top-block">
+              <div class="cv-top-left">
+                <div class="cv-avatar" id="cv-avatar-mini"><div class="cv-avatar-placeholder">👤</div></div>
+                <div>
+                  <div class="cv-name" id="cv-full-name-mini">Prénom Nom</div>
+                  <div class="cv-jobtitle" id="cv-title-mini">Titre / Poste visé</div>
+                </div>
+              </div>
+              <div class="cv-top-contact" id="cv-contact-mini"></div>
+            </div>
+            <div class="cv-two-col">
+              <div class="cv-col-left">
+                <div class="cv-main-section">
+                  <span class="cv-col-left-drag">⠿</span><div class="cv-main-heading">Compétences</div>
+                  <div id="cv-tech-block-mini" style="margin-bottom:6px">
+                    <div class="cv-skill-sublabel-mini" id="cv-tech-sublabel-mini">Techniques</div>
+                    <div id="cv-tech-tags-mini"></div>
+                  </div>
+                  <div id="cv-soft-block-mini">
+                    <div class="cv-skill-sublabel-mini" id="cv-soft-sublabel-mini">Soft skills</div>
+                    <div id="cv-soft-tags-mini"></div>
+                  </div>
+                </div>
+                <div class="cv-main-section">
+                  <span class="cv-col-left-drag">⠿</span><div class="cv-main-heading">Langues</div>
+                  <div id="cv-langs-mini"></div>
+                </div>
+                <div class="cv-main-section" id="cv-certif-mini-sect" style="display:none">
+                  <span class="cv-col-left-drag">⠿</span><div class="cv-main-heading">Certifications</div>
+                  <div id="cv-certifs-mini"></div>
+                </div>
+                <div class="cv-main-section" id="cv-interest-mini-sect" style="display:none">
+                  <span class="cv-col-left-drag">⠿</span><div class="cv-main-heading">Centres d'intérêt</div>
+                  <div id="cv-interests-mini"></div>
+                </div>
+                <div class="cv-main-section" id="cv-qr-mini-sect" style="display:none">
+                  <div class="cv-main-heading">LinkedIn</div>
+                  <div id="cv-qr-canvas-mini" style="margin-top:6px"></div>
+                </div>
+                <div id="cv-custom-gauche-mini"></div>
+              </div>
+              <div class="cv-col-right" id="cv-mini-right">
+                <div class="cv-main-section"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Expériences professionnelles</div><div id="cv-experiences-mini"><div class="cv-empty-hint">...</div></div></div>
+                <div class="cv-main-section" id="cv-asso-mini-section" style="display:none"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Expériences associatives</div><div id="cv-associations-mini"></div></div>
+                <div class="cv-main-section"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Formations</div><div id="cv-formations-mini"><div class="cv-empty-hint">...</div></div></div>
+                <div id="cv-custom-droite-mini"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Normal sections -->
+          <div id="cv-normal-sections">
+            <div class="cv-main-section"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Expériences professionnelles</div><div id="cv-experiences"><div class="cv-empty-hint">Remplis la section expériences...</div></div></div>
+            <div class="cv-main-section" id="cv-asso-section" style="display:none"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Expériences associatives</div><div id="cv-associations"></div></div>
+            <div class="cv-main-section"><span class="cv-drag-handle">⠿</span><div class="cv-main-heading">Formations</div><div id="cv-formations"><div class="cv-empty-hint">Remplis la section formations...</div></div></div>
+            <div id="cv-custom-droite-sections"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PAGE LETTRE -->
+    <div id="lettre-wrapper" style="display:none;flex-shrink:0;transform-origin:top center">
+      <div id="lettre-preview" class="lettre-tpl-moderne">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PLEIN ECRAN -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnBg(event)">
+  <div class="modal-cv-wrapper"><div id="modal-cv-inner" class="modal-cv-inner"></div></div>
+</div>
+<button class="modal-close" id="modal-close-btn" onclick="closeModal()" style="display:none">✕</button>
+<div class="modal-hint" id="modal-hint" style="display:none">Appuie sur Échap pour fermer • Scroll pour voir tout le CV</div>
+
+<script>
+let zoomLevel=0.45,tagStore={tech:[],soft:[]},langues=[],certifs=[],certifCounter=0,interets=[],photoBase64=null,currentTemplate='moderne';
+let lettre={destNom:'',destEntreprise:'',destVille:'',date:'',objet:'',appel:'Madame, Monsieur,',corps:'',politesse:'Dans l\'attente de votre réponse, veuillez agréer, Madame, Monsieur, l\'expression de mes salutations distinguées.'};
+let entries={formations:[],experiences:[],associations:[]},entryCounters={formations:0,experiences:0,associations:0};
+let customSections={gauche:[],droite:[]},customCounters={gauche:0,droite:0};
+
+function showPanel(n){
+  document.querySelectorAll('.section-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  document.getElementById('nav-'+n).classList.add('active');
+  // Afficher la lettre dans l'aperçu si on est dans ce panel
+  const lw=document.getElementById('lettre-wrapper');
+  if(lw){lw.style.display=(n==='lettre')?'block':'none';applyZoom();}
+}
+
+function setZoom(d){zoomLevel=Math.min(1.2,Math.max(0.25,zoomLevel+d));applyZoom();}
+function fitZoom(){const w=document.getElementById('preview-area').clientWidth-48;zoomLevel=Math.min(0.65,w/794);applyZoom();}
+function applyZoom(){
+  const cvW=document.getElementById('cv-wrapper');
+  const lw=document.getElementById('lettre-wrapper');
+  cvW.style.transform=`scale(${zoomLevel})`;
+  document.getElementById('zoom-val').textContent=Math.round(zoomLevel*100)+'%';
+  // scale() ne modifie pas le flux : compenser avec marginBottom
+  // gap = espace visuel occupé - espace dans le flux (négatif si zoom<1)
+  const gap=Math.round(1123*zoomLevel)-1123;
+  cvW.style.marginBottom=(gap+20)+'px';
+  if(lw&&lw.style.display!=='none'){
+    lw.style.transform=`scale(${zoomLevel})`;
+    lw.style.marginTop='0';
+    // Collaper l'espace vide sous la lettre zoomée
+    lw.style.marginBottom=gap+'px';
+  }
+}
+
+function initResize(){
+  const h=document.getElementById('resize-handle'),fa=document.getElementById('form-area');
+  let drag=false,sx=0,sw=0;
+  h.addEventListener('mousedown',e=>{drag=true;sx=e.clientX;sw=fa.offsetWidth;h.classList.add('dragging');document.body.style.cssText='cursor:col-resize;user-select:none';});
+  document.addEventListener('mousemove',e=>{if(!drag)return;fa.style.width=Math.min(700,Math.max(280,sw+e.clientX-sx))+'px';});
+  document.addEventListener('mouseup',()=>{if(drag){drag=false;h.classList.remove('dragging');document.body.style.cssText='';}});
+}
+
+function openModal(){
+  const modal=document.getElementById('modal-overlay');
+  const inner=document.getElementById('modal-cv-inner');
+  inner.innerHTML='';
+  const cvClone=document.getElementById('cv-preview').cloneNode(true);
+  cvClone.style.cssText='width:794px;min-height:1123px;';
+  inner.appendChild(cvClone);
+  // Si lettre visible, l'ajouter aussi
+  const lw=document.getElementById('lettre-wrapper');
+  if(lw&&lw.style.display!=='none'){
+    renderLettre();
+    const lmClone=document.getElementById('lettre-preview').cloneNode(true);
+    lmClone.style.cssText='width:794px;min-height:1123px;margin-top:24px;';
+    inner.appendChild(lmClone);
+  }
+  const sc=Math.min((window.innerWidth-48)/794,1.0);
+  inner.style.transform=`scale(${sc})`;
+  inner.style.transformOrigin='top center';
+  inner.style.display='block';
+  inner.style.width='794px';
+  const totalH=inner.scrollHeight||1123;
+  inner.parentElement.style.height=(totalH*sc+60)+'px';
+  modal.classList.add('open');
+  modal.scrollTop=0;
+  document.getElementById('modal-close-btn').style.display='flex';
+  document.getElementById('modal-hint').style.display='block';
+  document.addEventListener('keydown',modalKey);
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');document.getElementById('modal-close-btn').style.display='none';document.getElementById('modal-hint').style.display='none';document.removeEventListener('keydown',modalKey);}
+function closeModalOnBg(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+function modalKey(e){if(e.key==='Escape')closeModal();}
+
+function setTemplate(tpl){
+  currentTemplate=tpl;
+  document.getElementById('cv-preview').className='tpl-'+tpl;
+  const mini=tpl==='minimaliste';
+  document.getElementById('cv-mini-top').style.display=mini?'':'none';
+  document.getElementById('cv-normal-sections').style.display=mini?'none':'';
+  document.querySelector('.cv-sidebar').style.display=mini?'none':'';
+  ['moderne','minimaliste','colore'].forEach(t=>document.getElementById('tpl-btn-'+t).classList.toggle('active',t===tpl));
+  updatePreview();
+  renderLettre();
+}
+
+function applyColors(){
+  const s=document.getElementById('color-sidebar').value,a=document.getElementById('color-accent').value;
+  document.documentElement.style.setProperty('--cv-sidebar',s);
+  document.documentElement.style.setProperty('--cv-accent',a);
+  const ms=document.getElementById('tpl-mini-sidebar'),a1=document.getElementById('tpl-mini-acc1'),a2=document.getElementById('tpl-mini-acc2');
+  if(ms)ms.style.background=s;if(ms)ms.style.borderRightColor=a;
+  if(a1)a1.style.background=a;if(a2)a2.style.background=a;
+}
+function setPalette(s,a){document.getElementById('color-sidebar').value=s;document.getElementById('color-accent').value=a;applyColors();}
+
+// ── Palettes personnalisées ──
+let customPalettes=[];
+function saveCurrentPalette(){
+  const s=document.getElementById('color-sidebar').value;
+  const a=document.getElementById('color-accent').value;
+  const name=prompt('Nom de cette palette (ex: Mon bleu) :','Palette '+(customPalettes.length+1));
+  if(!name)return;
+  customPalettes.push({name,s,a});
+  saveCustomPalettes();
+  renderCustomPalettes();
+  showToast('✅ Palette sauvegardée !');
+}
+function deleteCustomPalette(i){
+  customPalettes.splice(i,1);
+  saveCustomPalettes();
+  renderCustomPalettes();
+}
+function saveCustomPalettes(){
+  localStorage.setItem('cv_custom_palettes',JSON.stringify(customPalettes));
+}
+function loadCustomPalettes(){
+  try{const raw=localStorage.getItem('cv_custom_palettes');if(raw)customPalettes=JSON.parse(raw);}catch(e){}
+  renderCustomPalettes();
+}
+function renderCustomPalettes(){
+  const row=document.getElementById('custom-palettes-row');
+  if(!row)return;
+  if(!customPalettes.length){row.innerHTML='<span style="font-size:11px;color:var(--muted);font-style:italic;">Aucune palette sauvegardée</span>';return;}
+  row.innerHTML=customPalettes.map((p,i)=>`
+    <button class="palette-custom-btn" onclick="setPalette('${p.s}','${p.a}')">
+      <span class="palette-custom-swatch" style="background:${p.s}"></span>
+      <span class="palette-custom-swatch" style="background:${p.a}"></span>
+      ${p.name}
+      <span class="palette-custom-del" onclick="event.stopPropagation();deleteCustomPalette(${i})" title="Supprimer">✕</span>
+    </button>`).join('');
+}
+function applyFont(){const f=document.getElementById('cv-font-select').value;document.documentElement.style.setProperty('--cv-font',f);document.getElementById('cv-preview').style.fontFamily=f;}
+function applyFontSize(){
+  const s=parseFloat(document.getElementById('font-size-range').value);
+  const r=s/11; // ratio basé sur 11px (taille de référence colonne gauche)
+  document.getElementById('font-size-val').textContent=s+'px';
+  let el=document.getElementById('cv-font-override');
+  if(!el){el=document.createElement('style');el.id='cv-font-override';document.head.appendChild(el);}
+  el.textContent=`
+    #cv-preview{font-size:${s}px!important}
+    /* Nom + titre : proportionnels à la base */
+    #cv-preview .cv-name{font-size:${(20*r).toFixed(1)}px!important}
+    #cv-preview .cv-jobtitle{font-size:${(10*r).toFixed(1)}px!important}
+    /* Titres de section colonne droite */
+    #cv-preview .cv-main-heading{font-size:${(10.5*r).toFixed(1)}px!important}
+    /* Titres d'entrée colonne droite */
+    #cv-preview .cv-entry-title{font-size:${(12*r).toFixed(1)}px!important}
+    /* Tout le reste de la colonne gauche hérite de s (même taille que certif-name) */
+    #cv-preview .cv-sidebar-heading{font-size:${(8.5*r).toFixed(1)}px!important}
+    #cv-preview .cv-contact-item,
+    #cv-preview .cv-skill-tag,#cv-preview .cv-skill-soft-tag,
+    #cv-preview .cv-lang-item,
+    #cv-preview .cv-lang-level,
+    #cv-preview .cv-certif-item,#cv-preview .cv-certif-name,
+    #cv-preview .cv-interest-item,#cv-preview .cv-interest-tag{font-size:${s}px!important}
+    #cv-preview .cv-certif-meta{font-size:${(s*0.88).toFixed(1)}px!important}
+    #cv-preview .cv-certif-desc{font-size:${(s*0.88).toFixed(1)}px!important}
+    #cv-preview .cv-skill-sublabel,#cv-preview .cv-skill-sublabel-mini{font-size:${(7.5*r).toFixed(1)}px!important}
+    /* Colonne droite corps */
+    #cv-preview .cv-entry-org{font-size:${s}px!important}
+    #cv-preview .cv-entry-dates{font-size:${(9*r).toFixed(1)}px!important}
+    #cv-preview .cv-entry-desc,#cv-preview .cv-bullet-item{font-size:${s}px!important}
+  `;
+}
+
+function handlePhotoUpload(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{photoBase64=e.target.result;document.getElementById('photo-upload-preview').innerHTML=`<img src="${photoBase64}" alt="Photo"><div class="photo-name">📎 ${file.name}</div>`;document.getElementById('photo_url').value='';updatePreview();};
+  r.readAsDataURL(file);
+}
+function clearPhoto(){photoBase64=null;document.getElementById('photo_url').value='';document.getElementById('photo-file-input').value='';document.getElementById('photo-upload-preview').innerHTML='<div class="photo-upload-placeholder"><span style="font-size:28px">🖼️</span><span>Clique ou glisse une photo ici</span></div>';updatePreview();}
+
+function addSkill(type){
+  const input=document.getElementById('new-'+type);
+  const v=input.value.trim();if(!v)return;
+  tagStore[type].push(v);input.value='';
+  renderSkills(type);updatePreview();
+}
+function removeSkill(type,i){tagStore[type].splice(i,1);renderSkills(type);updatePreview();}
+function renderSkills(type){
+  const el=document.getElementById(type+'-list');if(!el)return;
+  el.innerHTML=tagStore[type].map((s,i)=>`<div class="star-row"><span class="entry-handle" style="font-size:13px;color:var(--muted);cursor:grab;margin-right:6px">⠿</span><span class="star-label">${s}</span><button class="star-remove-btn" onclick="removeSkill('${type}',${i})">✕</button></div>`).join('');
+  if(tagStore[type].length>1)Sortable.create(el,{animation:150,ghostClass:'sortable-ghost',onEnd:evt=>{const m=tagStore[type].splice(evt.oldIndex,1)[0];tagStore[type].splice(evt.newIndex,0,m);updatePreview();}});
+}
+
+function addLangue(){const n=document.getElementById('new-lang-name').value.trim(),l=document.getElementById('new-lang-level').value;if(!n)return;langues.push({name:n,level:l});document.getElementById('new-lang-name').value='';renderLangues();updatePreview();}
+function removeLangue(i){langues.splice(i,1);renderLangues();updatePreview();}
+function renderLangues(){
+  const el=document.getElementById('langues-list');
+  el.innerHTML=langues.map((l,i)=>`<div class="star-row"><span class="entry-handle" style="font-size:13px;color:var(--muted);cursor:grab;margin-right:6px">⠿</span><span class="star-label"><strong>${l.name}</strong> — ${l.level}</span><button class="star-remove-btn" onclick="removeLangue(${i})">✕</button></div>`).join('');
+  if(langues.length>1)Sortable.create(el,{animation:150,ghostClass:'sortable-ghost',onEnd:evt=>{const m=langues.splice(evt.oldIndex,1)[0];langues.splice(evt.newIndex,0,m);updatePreview();}});
+}
+
+const MOIS=['','Janv.','Févr.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
+function buildDateStr(e){
+  const deb=[MOIS[parseInt(e.debMois)||0],e.debAnnee].filter(Boolean).join(' ');
+  const fin=e.encours?'En cours':[MOIS[parseInt(e.finMois)||0],e.finAnnee].filter(Boolean).join(' ');
+  if(!deb&&!fin)return'';
+  if(!fin)return deb;
+  if(!deb)return fin;
+  return deb+' – '+fin;
+}
+
+function addCertif(){
+  const id=certifCounter++;
+  certifs.push({id,name:'',org:'',mois:'',annee:'',encours:false,desc:''});
+  renderCertifs();
+  setTimeout(()=>toggleCertif(id),50);
+}
+function removeCertif(id){certifs=certifs.filter(c=>c.id!==id);renderCertifs();updatePreview();}
+function toggleCertif(id){
+  document.getElementById('certif-body-'+id)?.classList.toggle('open');
+  document.getElementById('certif-toggle-'+id)?.classList.toggle('open');
+}
+function updateCertifField(id,field,val){
+  const c=certifs.find(c=>c.id===id);if(!c)return;
+  c[field]=field==='encours'?val:val;
+  // Mettre à jour le header
+  const h=document.getElementById('certif-header-title-'+id);
+  if(h)h.textContent=(c.name||'(sans titre)')+(c.org?' — '+c.org:'');
+  updatePreview();
+}
+function renderCertifs(){
+  const container=document.getElementById('certifs-list');
+  container.innerHTML='';
+  certifs.forEach(c=>{
+    const card=document.createElement('div');
+    card.className='entry-card';card.id='certif-card-'+c.id;
+    const dateStr=c.encours?'En cours':[MOIS[parseInt(c.mois)||0],c.annee].filter(Boolean).join(' ');
+    const headerTxt=(c.name||'(sans titre)')+(c.org?' — '+c.org:'');
+    card.innerHTML=`
+      <div class="entry-header" onclick="toggleCertif(${c.id})">
+        <span class="entry-handle">⠿</span>
+        <div style="flex:1;min-width:0">
+          <span class="entry-title-text" id="certif-header-title-${c.id}">${headerTxt}</span>
+          ${dateStr?`<span style="font-size:11px;color:var(--muted);margin-left:8px">${dateStr}</span>`:''}
+        </div>
+        <button class="btn btn-danger" onclick="event.stopPropagation();removeCertif(${c.id})">✕</button>
+        <span class="entry-toggle" id="certif-toggle-${c.id}" style="margin-left:6px">▼</span>
+      </div>
+      <div class="entry-body" id="certif-body-${c.id}">
+        <div class="field-row">
+          <div class="field"><label>Nom du Certificat</label>
+            <input type="text" placeholder="Certification SecNumAcadémie" value="${c.name||''}"
+              oninput="updateCertifField(${c.id},'name',this.value)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Établissement</label>
+            <input type="text" placeholder="ANSSI, Coursera..." value="${c.org||''}"
+              oninput="updateCertifField(${c.id},'org',this.value)">
+          </div>
+          <div class="field" style="max-width:120px"><label>Mois</label>
+            <select onchange="updateCertifField(${c.id},'mois',this.value)">
+              ${MOIS.map((m,i)=>`<option value="${i}" ${parseInt(c.mois)===i?'selected':''}>${m||'—'}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field" style="max-width:100px"><label>Année</label>
+            <input type="text" placeholder="${new Date().getFullYear()}" value="${c.annee||''}" maxlength="4"
+              oninput="updateCertifField(${c.id},'annee',this.value)">
+          </div>
+        </div>
+        <div class="field-row">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);cursor:pointer;padding:2px 0">
+            <input type="checkbox" ${c.encours?'checked':''} style="width:auto;accent-color:var(--accent)"
+              onchange="updateCertifField(${c.id},'encours',this.checked)"> En cours
+          </label>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Description (optionnel)</label>
+            <textarea placeholder="Ex : Cours de programmation, Certification Google Analytics..."
+              oninput="updateCertifField(${c.id},'desc',this.value)">${c.desc||''}</textarea>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+  if(certifs.length>1)Sortable.create(container,{animation:150,handle:'.entry-handle',ghostClass:'sortable-ghost',
+    onEnd:evt=>{const m=certifs.splice(evt.oldIndex,1)[0];certifs.splice(evt.newIndex,0,m);updatePreview();}});
+}
+
+function addInteret(){const v=document.getElementById('new-interet').value.trim();if(!v)return;interets.push(v);document.getElementById('new-interet').value='';renderInterets();updatePreview();}
+function removeInteret(i){interets.splice(i,1);renderInterets();updatePreview();}
+function renderInterets(){
+  const el=document.getElementById('interets-list');
+  if(!el)return;
+  el.innerHTML=interets.map((c,i)=>`<div class="star-row" style="cursor:default"><span class="entry-handle" style="font-size:13px;color:var(--muted);cursor:grab;margin-right:6px">⠿</span><span class="star-label">${c}</span><button class="star-remove-btn" onclick="removeInteret(${i})">✕</button></div>`).join('');
+  if(interets.length>1)Sortable.create(el,{animation:150,ghostClass:'sortable-ghost',onEnd:evt=>{const m=interets.splice(evt.oldIndex,1)[0];interets.splice(evt.newIndex,0,m);updatePreview();}});
+}
+
+const entryConfig={
+  formations:[{id:'title',label:'Diplôme / Titre',placeholder:'Master Informatique'},{id:'org',label:'École / Université',placeholder:'Université Paris-Saclay'},{id:'location',label:'Lieu',placeholder:'Paris, France'},{id:'desc',label:'Description (optionnel)',placeholder:'Spécialisation, mention...',type:'textarea'}],
+  experiences:[{id:'title',label:'Intitulé du poste',placeholder:'Développeur Full Stack'},{id:'org',label:'Entreprise',placeholder:'Capgemini'},{id:'location',label:'Lieu',placeholder:'Paris, France'},{id:'desc',label:'Missions (une par ligne)',placeholder:'Développement API REST...\nMise en place CI/CD...',type:'textarea'}],
+  associations:[{id:'title',label:'Rôle / Fonction',placeholder:'Président, Bénévole...'},{id:'org',label:'Association',placeholder:'BDE ESGI'},{id:'location',label:'Lieu (optionnel)',placeholder:'Paris'},{id:'desc',label:'Description',placeholder:"Organisation d'événements...",type:'textarea'}]
+};
+function addEntry(type){const id=entryCounters[type]++;entries[type].push({id,title:'',org:'',location:'',desc:'',debMois:'',debAnnee:'',finMois:'',finAnnee:'',encours:false});renderEntries(type);setTimeout(()=>toggleEntry(type,id),50);}
+function removeEntry(type,id){entries[type]=entries[type].filter(e=>e.id!==id);renderEntries(type);updatePreview();}
+function toggleEntry(type,id){document.getElementById(`entry-body-${type}-${id}`)?.classList.toggle('open');document.getElementById(`entry-toggle-${type}-${id}`)?.classList.toggle('open');}
+function updateEntryField(type,id,field,val){
+  const e=entries[type].find(e=>e.id===id);if(!e)return;
+  if(field==='encours')e[field]=val;else e[field]=val;
+  const h=document.getElementById(`entry-header-title-${type}-${id}`);
+  if(h&&field==='title')h.textContent=val||'(sans titre)';
+  const ds=document.getElementById(`entry-header-date-${type}-${id}`);
+  if(ds)ds.textContent=buildDateStr(e);
+  updatePreview();
+}
+function moisOptions(selected){
+  return MOIS.map((m,i)=>`<option value="${i}" ${parseInt(selected)===i?'selected':''}>${m||'—'}</option>`).join('');
+}
+function renderEntries(type){
+  const container=document.getElementById(`${type}-list`);container.innerHTML='';
+  entries[type].forEach(entry=>{
+    const fields=entryConfig[type];
+    const card=document.createElement('div');card.className='entry-card';card.id=`entry-card-${type}-${entry.id}`;
+    const datePreview=buildDateStr(entry);
+    card.innerHTML=`<div class="entry-header" onclick="toggleEntry('${type}',${entry.id})">
+      <span class="entry-handle">⠿</span>
+      <div style="flex:1;min-width:0">
+        <span class="entry-title-text" id="entry-header-title-${type}-${entry.id}">${entry.title||'(sans titre)'}</span>
+        ${datePreview?`<span style="font-size:11px;color:var(--muted);margin-left:8px" id="entry-header-date-${type}-${entry.id}">${datePreview}</span>`:`<span style="font-size:11px;color:var(--muted);margin-left:8px" id="entry-header-date-${type}-${entry.id}"></span>`}
+      </div>
+      <button class="btn btn-danger" onclick="event.stopPropagation();removeEntry('${type}',${entry.id})">✕</button>
+      <span class="entry-toggle" id="entry-toggle-${type}-${entry.id}" style="margin-left:6px">▼</span>
+    </div>
+    <div class="entry-body" id="entry-body-${type}-${entry.id}"></div>`;
+    const body=card.querySelector('.entry-body');
+
+    // Champs normaux (title, org, location, desc)
+    let i=0;
+    while(i<fields.length){
+      const f=fields[i];const row=document.createElement('div');row.className='field-row';
+      if(f.type==='textarea'){row.innerHTML=`<div class="field"><label>${f.label}</label><textarea placeholder="${f.placeholder}" oninput="updateEntryField('${type}',${entry.id},'${f.id}',this.value)">${entry[f.id]||''}</textarea></div>`;i++;}
+      else if(i+1<fields.length&&fields[i+1].type!=='textarea'){const f2=fields[i+1];row.innerHTML=`<div class="field"><label>${f.label}</label><input type="text" placeholder="${f.placeholder}" value="${entry[f.id]||''}" oninput="updateEntryField('${type}',${entry.id},'${f.id}',this.value)"></div><div class="field"><label>${f2.label}</label><input type="text" placeholder="${f2.placeholder}" value="${entry[f2.id]||''}" oninput="updateEntryField('${type}',${entry.id},'${f2.id}',this.value)"></div>`;i+=2;}
+      else{row.innerHTML=`<div class="field"><label>${f.label}</label><input type="text" placeholder="${f.placeholder}" value="${entry[f.id]||''}" oninput="updateEntryField('${type}',${entry.id},'${f.id}',this.value)"></div>`;i++;}
+      // Injecter la ligne de dates juste après org (2e champ = index 1)
+      if(i===2){
+        const dateRow=document.createElement('div');dateRow.className='field-row';
+        dateRow.style.cssText='flex-wrap:wrap;gap:8px;align-items:flex-end;';
+        dateRow.innerHTML=`
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;margin-bottom:6px">DÉBUT</div>
+            <div style="display:flex;gap:8px">
+              <div class="field">
+                <label>Mois <span style="opacity:.5;font-weight:400">(optionnel)</span></label>
+                <select onchange="updateEntryField('${type}',${entry.id},'debMois',this.value)">${moisOptions(entry.debMois)}</select>
+              </div>
+              <div class="field" style="max-width:90px">
+                <label>Année</label>
+                <input type="text" placeholder="2022" maxlength="4" value="${entry.debAnnee||''}" oninput="updateEntryField('${type}',${entry.id},'debAnnee',this.value)">
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;margin-bottom:6px">FIN</div>
+            <div style="display:flex;gap:8px;align-items:flex-end">
+              <div class="field" style="display:${entry.encours?'none':''};" id="fin-fields-${type}-${entry.id}">
+                <div style="display:flex;gap:8px">
+                  <div class="field">
+                    <label>Mois <span style="opacity:.5;font-weight:400">(optionnel)</span></label>
+                    <select onchange="updateEntryField('${type}',${entry.id},'finMois',this.value)">${moisOptions(entry.finMois)}</select>
+                  </div>
+                  <div class="field" style="max-width:90px">
+                    <label>Année</label>
+                    <input type="text" placeholder="2024" maxlength="4" value="${entry.finAnnee||''}" oninput="updateEntryField('${type}',${entry.id},'finAnnee',this.value)">
+                  </div>
+                </div>
+              </div>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;padding-bottom:8px;white-space:nowrap">
+                <input type="checkbox" ${entry.encours?'checked':''} style="width:auto;accent-color:var(--accent)"
+                  onchange="
+                    updateEntryField('${type}',${entry.id},'encours',this.checked);
+                    document.getElementById('fin-fields-${type}-${entry.id}').style.display=this.checked?'none':'';
+                  "> En cours
+              </label>
+            </div>
+          </div>`;
+        body.appendChild(dateRow);
+      }
+      body.appendChild(row);
+    }
+    container.appendChild(card);
+  });
+  Sortable.create(container,{animation:150,handle:'.entry-handle',ghostClass:'sortable-ghost',onEnd:evt=>{const m=entries[type].splice(evt.oldIndex,1)[0];entries[type].splice(evt.newIndex,0,m);updatePreview();}});
+}
+
+function vv(id){return(document.getElementById(id)||{}).value||'';}
+function ciHTML(item,compact){
+  const display=item.tx;
+  const inner=item.link?(item.href?`<a href="${item.href}" style="color:inherit;text-decoration:none">${display}</a>`:`<a href="${item.tx.startsWith('http')?item.tx:'https://'+item.tx}" style="color:inherit;text-decoration:none">${display}</a>`):display;
+  return compact?`<div class="cv-contact-item">${item.ic} ${inner}</div>`:`<div class="cv-contact-item"><span style="flex-shrink:0">${item.ic}</span><span>${inner}</span></div>`;
+}
+
+function updatePreview(){
+  const fn=(vv('prenom')+' '+vv('nom')).trim()||'Prénom Nom',ti=vv('titre')||'Titre / Poste visé';
+  const pu=photoBase64||vv('photo_url');
+  const avHTML=pu?`<img src="${pu}" alt="Photo" onerror="this.parentNode.innerHTML='<div class=cv-avatar-placeholder>👤</div>'">`:'<div class="cv-avatar-placeholder">👤</div>';
+  ['cv-full-name','cv-full-name-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fn;});
+  ['cv-title-display','cv-title-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=ti;});
+  ['cv-avatar','cv-avatar-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=avHTML;});
+
+  const ci=[];
+  if(vv('tel'))ci.push({ic:'📞',tx:vv('tel'),link:false});
+  if(vv('email'))ci.push({ic:'📧',tx:vv('email'),link:true,href:'mailto:'+vv('email')});
+  if(vv('location'))ci.push({ic:'📍',tx:vv('location'),link:false});
+  if(vv('age'))ci.push({ic:'🎂',tx:vv('age'),link:false});
+  if(vv('nationalite'))ci.push({ic:'🌍',tx:vv('nationalite'),link:false});
+  if(vv('permis'))ci.push({ic:'🪪',tx:vv('permis'),link:false});
+  if(vv('linkedin'))ci.push({ic:'🔗',tx:vv('linkedin'),link:true});
+  if(vv('github'))ci.push({ic:'💻',tx:vv('github'),link:true});
+  if(vv('autrelien'))ci.push({ic:'🌐',tx:vv('autrelien'),link:true});
+  document.getElementById('cv-contact-list').innerHTML=ci.length?ci.map(i=>ciHTML(i,false)).join(''):'<div class="cv-contact-item cv-empty-hint">Remplis le contact...</div>';
+  const cm=document.getElementById('cv-contact-mini');if(cm)cm.innerHTML=ci.map(i=>ciHTML(i,true)).join('');
+  // QR code LinkedIn
+  const showQR=document.getElementById('qr-linkedin')?.checked && vv('linkedin');
+  // Normaliser l'URL LinkedIn une seule fois
+  let linkedinUrl='';
+  if(showQR){
+    let rawUrl=vv('linkedin');
+    if(!rawUrl.startsWith('http'))rawUrl='https://'+rawUrl;
+    linkedinUrl=rawUrl;
+    try{const u=new URL(rawUrl);linkedinUrl=u.origin+u.pathname.replace(/\/+$/,'');}catch(e){}
+  }
+  function buildQR(canvasEl,dark,bg){
+    canvasEl.innerHTML='';
+    try{new QRCode(canvasEl,{text:linkedinUrl,width:80,height:80,colorDark:dark,colorLight:bg,correctLevel:QRCode.CorrectLevel.L});}
+    catch(e){canvasEl.innerHTML=`<div style="font-size:8px;color:#aaa;text-align:center;padding:4px">URL trop longue</div>`;}
+  }
+  // Sidebar (templates Moderne + Coloré)
+  const qrBlock=document.getElementById('cv-qr-block');
+  const qrCanvas=document.getElementById('cv-qr-canvas');
+  if(qrBlock){
+    const show=showQR&&currentTemplate!=='minimaliste';
+    qrBlock.style.display=show?'flex':'none';
+    if(show&&qrCanvas){
+      const qrBg=getComputedStyle(document.documentElement).getPropertyValue('--cv-sidebar').trim()||'#1e2235';
+      buildQR(qrCanvas,'#ffffff',qrBg);
+    }
+  }
+  // Col-left minimaliste
+  const qrMiniSect=document.getElementById('cv-qr-mini-sect');
+  const qrCanvasMini=document.getElementById('cv-qr-canvas-mini');
+  if(qrMiniSect){
+    const show=showQR&&currentTemplate==='minimaliste';
+    qrMiniSect.style.display=show?'':'none';
+    if(show&&qrCanvasMini)buildQR(qrCanvasMini,'#111111','#ffffff');
+  }
+
+  const th=tagStore.tech.map(t=>`<span class="cv-skill-tag">${t}</span>`).join('');
+  const sh=tagStore.soft.map(t=>`<span class="cv-skill-soft-tag">${t}</span>`).join('');
+  ['cv-tech-tags','cv-tech-tags-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=th;});
+  ['cv-soft-tags','cv-soft-tags-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=sh;});
+  const tsl=document.getElementById('cv-tech-sublabel'),ssl=document.getElementById('cv-soft-sublabel');
+  const tslm=document.getElementById('cv-tech-sublabel-mini'),sslm=document.getElementById('cv-soft-sublabel-mini');
+  if(tsl)tsl.style.display=tagStore.tech.length?'':'none';
+  if(ssl)ssl.style.display=tagStore.soft.length?'':'none';
+  if(tslm)tslm.style.display=tagStore.tech.length?'':'none';
+  if(sslm)sslm.style.display=tagStore.soft.length?'':'none';
+
+  const lh=langues.map(l=>`<div class="cv-lang-item"><span>${l.name}</span><span class="cv-lang-level">${l.level}</span></div>`).join('')||'<div class="cv-empty-hint">Ajoute des langues...</div>';
+  ['cv-langs','cv-langs-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=lh;});
+
+  const ch=certifs.map(c=>{
+    const dateStr=c.encours?'En cours':[MOIS[parseInt(c.mois)||0],c.annee].filter(Boolean).join(' ');
+    const meta=[c.org,dateStr].filter(Boolean).join(' | ');
+    return `<div class="cv-certif-item">
+      <span class="cv-certif-name">${c.name||''}</span>
+      ${meta?`<span class="cv-certif-meta">${meta}</span>`:''}
+      ${c.desc?`<div class="cv-certif-desc">${c.desc}</div>`:''}
+    </div>`;
+  }).join('');
+  ['cv-certif-section','cv-certif-mini-sect'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=certifs.length?'':'none';});
+  ['cv-certifs','cv-certifs-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=ch;});
+
+  const ih=interets.map(t=>`<span class="cv-interest-tag">${t}</span>`).join('');
+  ['cv-interest-section','cv-interest-mini-sect'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=interets.length?'':'none';});
+  ['cv-interests','cv-interests-mini'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=ih;});
+
+  renderCustomCV();
+  ['experiences','associations','formations'].forEach(type=>{
+    renderCVEntries(type,'cv-'+type);
+    renderCVEntries(type,'cv-'+type+'-mini');
+  });
+}
+function renderCVEntries(type,targetId){
+  const el=document.getElementById(targetId);if(!el)return;
+  const arr=entries[type];
+  // Masquer/afficher la section associations si vide
+  if(type==='associations'){
+    const s1=document.getElementById('cv-asso-section'),s2=document.getElementById('cv-asso-mini-section');
+    if(s1)s1.style.display=arr.length?'':'none';
+    if(s2)s2.style.display=arr.length?'':'none';
+  }
+  if(!arr.length){el.innerHTML='';return;}
+  el.innerHTML=arr.map(e=>{
+    if(!e.title&&!e.org)return'';
+    const bl=(e.desc||'').split('\n').filter(l=>l.trim());
+    return`<div class="cv-entry"><div class="cv-entry-header"><div class="cv-entry-title">${e.title||''}</div><div class="cv-entry-dates">${buildDateStr(e)}</div></div><div class="cv-entry-org">${e.org||''}${e.location?' · <span style="color:#888;font-weight:400">'+e.location+'</span>':''}</div>${bl.length>1?`<ul class="cv-bullet-list">${bl.map(b=>`<li class="cv-bullet-item">${b}</li>`).join('')}</ul>`:bl.length===1?`<div class="cv-entry-desc">${bl[0]}</div>`:''}</div>`;
+  }).join('');
+}
+
+// ── SECTIONS PERSONNALISÉES ──
+function addCustomSection(col){
+  const id=customCounters[col]++;
+  customSections[col].push({id,titre:'',contenu:''});
+  renderCustomSections(col);
+  setTimeout(()=>toggleCustom(col,id),50);
+}
+function removeCustomSection(col,id){
+  customSections[col]=customSections[col].filter(s=>s.id!==id);
+  renderCustomSections(col);
+  updatePreview();
+}
+function toggleCustom(col,id){
+  document.getElementById('custom-body-'+col+'-'+id)?.classList.toggle('open');
+  document.getElementById('custom-toggle-'+col+'-'+id)?.classList.toggle('open');
+}
+function updateCustomField(col,id,field,val){
+  const s=customSections[col].find(s=>s.id===id);if(!s)return;
+  s[field]=val;
+  if(field==='titre'){const h=document.getElementById('custom-header-'+col+'-'+id);if(h)h.textContent=val||'(sans titre)';}
+  updatePreview();
+}
+function renderCustomSections(col){
+  const container=document.getElementById('custom-'+col+'-list');
+  container.innerHTML='';
+  customSections[col].forEach(s=>{
+    const card=document.createElement('div');
+    card.className='entry-card';
+    card.innerHTML=`
+      <div class="entry-header" onclick="toggleCustom('${col}',${s.id})">
+        <span class="entry-handle">⠿</span>
+        <span class="entry-title-text" id="custom-header-${col}-${s.id}">${s.titre||'(sans titre)'}</span>
+        <button class="btn btn-danger" onclick="event.stopPropagation();removeCustomSection('${col}',${s.id})">✕</button>
+        <span class="entry-toggle" id="custom-toggle-${col}-${s.id}" style="margin-left:6px">▼</span>
+      </div>
+      <div class="entry-body" id="custom-body-${col}-${s.id}">
+        <div class="field-row">
+          <div class="field"><label>Titre de la section</label>
+            <input type="text" placeholder="Ex: Projets, Publications..." value="${s.titre||''}"
+              oninput="updateCustomField('${col}',${s.id},'titre',this.value)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Contenu</label>
+            <textarea style="min-height:100px" placeholder="Décris le contenu de cette section..."
+              oninput="updateCustomField('${col}',${s.id},'contenu',this.value)">${s.contenu||''}</textarea>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+  if(customSections[col].length>1)Sortable.create(container,{animation:150,handle:'.entry-handle',ghostClass:'sortable-ghost',
+    onEnd:evt=>{const m=customSections[col].splice(evt.oldIndex,1)[0];customSections[col].splice(evt.newIndex,0,m);updatePreview();}});
+}
+function renderCustomCV(){
+  const isMini=currentTemplate==='minimaliste';
+
+  // Colonne gauche — sidebar (moderne/coloré)
+  const gEl=document.getElementById('cv-custom-gauche-sections');
+  if(gEl){
+    gEl.innerHTML=(!isMini)?customSections.gauche.map(s=>{
+      if(!s.titre&&!s.contenu)return'';
+      return`<div class="cv-sidebar-section"><span class="cv-sidebar-drag">⠿</span>
+        <div class="cv-sidebar-heading">${s.titre||'Section'}</div>
+        <div style="font-size:inherit;line-height:1.6;white-space:pre-wrap">${s.contenu||''}</div>
+      </div>`;
+    }).join(''):'';
+  }
+  // Colonne gauche — col-left (minimaliste)
+  const gMini=document.getElementById('cv-custom-gauche-mini');
+  if(gMini){
+    gMini.innerHTML=isMini?customSections.gauche.map(s=>{
+      if(!s.titre&&!s.contenu)return'';
+      return`<div class="cv-main-section"><span class="cv-col-left-drag">⠿</span>
+        <div class="cv-main-heading">${s.titre||'Section'}</div>
+        <div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div>
+      </div>`;
+    }).join(''):'';
+  }
+
+  // Colonne droite — cv-normal-sections (moderne/coloré)
+  const dEl=document.getElementById('cv-custom-droite-sections');
+  if(dEl){
+    dEl.innerHTML=(!isMini)?customSections.droite.map(s=>{
+      if(!s.titre&&!s.contenu)return'';
+      return`<div class="cv-main-section"><span class="cv-drag-handle">⠿</span>
+        <div class="cv-main-heading">${s.titre||'Section'}</div>
+        <div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div>
+      </div>`;
+    }).join(''):'';
+  }
+  // Colonne droite — cv-mini-right-custom (minimaliste)
+  const dMini=document.getElementById('cv-custom-droite-mini');
+  if(dMini){
+    dMini.innerHTML=isMini?customSections.droite.map(s=>{
+      if(!s.titre&&!s.contenu)return'';
+      return`<div class="cv-main-section"><span class="cv-drag-handle">⠿</span>
+        <div class="cv-main-heading">${s.titre||'Section'}</div>
+        <div style="font-size:inherit;line-height:1.6;color:#444;white-space:pre-wrap">${s.contenu||''}</div>
+      </div>`;
+    }).join(''):'';
+  }
+}
+
+function updateLettre(){
+  lettre.destNom=vv('lm-dest-nom');
+  lettre.destEntreprise=vv('lm-dest-entreprise');
+  lettre.destVille=vv('lm-dest-ville');
+  lettre.date=vv('lm-date');
+  lettre.objet=vv('lm-objet');
+  lettre.appel=document.getElementById('lm-appel').value;
+  lettre.corps=vv('lm-corps');
+  lettre.politesse=document.getElementById('lm-politesse').value;
+  renderLettre();
+}
+
+function renderLettre(){
+  const prenom=vv('prenom'),nom=vv('nom');
+  const fullName=(prenom+' '+nom).trim()||'Prénom Nom';
+  const titre=vv('titre')||'';
+  const ci=[];
+  if(vv('tel'))ci.push(vv('tel'));
+  if(vv('email'))ci.push(vv('email'));
+  if(vv('location'))ci.push(vv('location'));
+  if(vv('linkedin'))ci.push(vv('linkedin'));
+  if(vv('github'))ci.push(vv('github'));
+  if(vv('autrelien'))ci.push(vv('autrelien'));
+
+  const tplClass='lettre-tpl-'+currentTemplate;
+  const el=document.getElementById('lettre-preview');
+  el.className=tplClass;
+
+  // Header selon template
+  let headerHTML='';
+  if(currentTemplate==='moderne'){
+    headerHTML=`
+      <div class="lm-header">
+        <div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div>
+        <div class="lm-header-contact">${ci.join('<br>')}</div>
+      </div>
+      <div class="lm-accent-bar"></div>`;
+  } else if(currentTemplate==='minimaliste'){
+    headerHTML=`
+      <div class="lm-header">
+        <div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div>
+        <div class="lm-header-contact">${ci.join('<br>')}</div>
+      </div>`;
+  } else if(currentTemplate==='colore'){
+    headerHTML=`
+      <div class="lm-header">
+        <div><div class="lm-header-name">${fullName}</div>${titre?'<div class="lm-header-title">'+titre+'</div>':''}</div>
+        <div class="lm-header-contact">${ci.join('<br>')}</div>
+      </div>`;
+  }
+
+  // Destinataire
+  const destLines=[];
+  if(lettre.destNom)destLines.push(lettre.destNom);
+  if(lettre.destEntreprise)destLines.push(`<span class="lm-dest-entreprise">${lettre.destEntreprise}</span>`);
+  if(lettre.destVille)destLines.push(lettre.destVille);
+  const destHTML=destLines.length?`<div class="lm-dest-block">${destLines.join('<br>')}</div>`:'<div class="lm-dest-block" style="color:#bbb;font-style:italic">Destinataire...</div>';
+
+  const bodyHTML=`
+    <div class="lm-body">
+      <div class="lm-meta-row">
+        ${destHTML}
+        <div class="lm-date-block">${lettre.date||''}</div>
+      </div>
+      ${lettre.objet?`<div class="lm-objet"><strong>Objet :</strong> ${lettre.objet}</div>`:''}
+      <div class="lm-appel">${lettre.appel}</div>
+      <div class="lm-corps-text">${lettre.corps||'<span style="color:#bbb;font-style:italic">Écris ta lettre dans le panneau de gauche...</span>'}</div>
+      ${lettre.politesse?`<div class="lm-politesse">${lettre.politesse}</div>`:''}
+      <div class="lm-signature">${fullName}</div>
+    </div>`;
+
+  el.innerHTML=headerHTML+bodyHTML;
+
+  // Sync zoom
+  const lw=document.getElementById('lettre-wrapper');
+  if(lw)lw.style.transform=`scale(${zoomLevel})`;
+}
+
+function exportLettreSeule(){
+  renderLettre();
+  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
+  setTimeout(()=>printElement([document.getElementById('lettre-preview')]),200);
+}
+
+function exportCVetLettre(){
+  renderLettre();
+  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
+  setTimeout(()=>printElement([
+    document.getElementById('cv-preview'),
+    document.getElementById('lettre-preview')
+  ]),200);
+}
+
+function exportJSON(){
+  const raw=localStorage.getItem('cv_builder_v2');
+  if(!raw){showToast('⚠️ Aucune donnée sauvegardée. Cliquez d’abord sur 💾 Sauvegarder.');return;}
+  const blob=new Blob([raw],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='cv_builder_data.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('✅ Données exportées !');
+}
+function importJSON(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      // Vérification basique
+      if(!data.fields&&!data.tagStore){showToast('❌ Fichier JSON invalide');return;}
+      localStorage.setItem('cv_builder_v2',e.target.result);
+      showToast('✅ Données importées ! Rechargement...');
+      setTimeout(()=>location.reload(),1000);
+    }catch(err){showToast('❌ Erreur lecture JSON : '+err.message);}
+  };
+  reader.readAsText(file);
+  ev.target.value=''; // reset input
+}
+function saveData(){
+  const d={fields:['prenom','nom','titre','photo_url','tel','email','location','linkedin','github','autrelien','age','nationalite','permis'].reduce((a,id)=>{a[id]=vv(id);return a;},{}),tagStore,langues,certifs,certifCounter,interets,entries,entryCounters,customSections,customCounters,photoBase64,lettre,template:currentTemplate,colors:{sidebar:document.getElementById('color-sidebar').value,accent:document.getElementById('color-accent').value},font:document.getElementById('cv-font-select').value,fontSize:document.getElementById('font-size-range').value,qrLinkedin:document.getElementById('qr-linkedin')?.checked||false};
+  localStorage.setItem('cv_builder_v2',JSON.stringify(d));showToast('💾 Sauvegardé !');
+}
+function loadData(){
+  try{
+    const raw=localStorage.getItem('cv_builder_v2');if(!raw)return;const d=JSON.parse(raw);
+    if(d.fields)Object.entries(d.fields).forEach(([id,val])=>{const e=document.getElementById(id);if(e)e.value=val;});
+    if(d.photoBase64){photoBase64=d.photoBase64;document.getElementById('photo-upload-preview').innerHTML=`<img src="${photoBase64}" alt="Photo"><div class="photo-name">📎 Photo sauvegardée</div>`;}
+    if(d.tagStore){tagStore=d.tagStore;['tech','soft'].forEach(t=>renderSkills(t));}
+    if(d.langues){langues=d.langues;renderLangues();}
+    if(d.certifs){certifs=d.certifs;certifCounter=d.certifCounter||certifs.length;renderCertifs();}if(d.interets){interets=d.interets;renderInterets();}
+    if(d.entries){
+      entries=d.entries;
+      entryCounters=d.entryCounters||{formations:0,experiences:0,associations:0};
+      // Compatibilité anciens saves : migrer 'dates' texte vers les nouveaux champs
+      ['formations','experiences','associations'].forEach(type=>{
+        entries[type].forEach(e=>{
+          if(!e.hasOwnProperty('debAnnee')){
+            e.debMois='';e.debAnnee='';e.finMois='';e.finAnnee='';e.encours=false;
+          }
+        });
+        renderEntries(type);
+      });
+    }
+    if(d.customSections){customSections=d.customSections;customCounters=d.customCounters||{gauche:0,droite:0};['gauche','droite'].forEach(c=>renderCustomSections(c));}
+    if(d.lettre){
+      lettre=d.lettre;
+      const fields=['dest-nom','dest-entreprise','dest-ville','date','objet','corps'];
+      fields.forEach(f=>{const el=document.getElementById('lm-'+f);if(el)el.value=lettre[f.replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]||'';});
+      if(d.lettre.appel){const el=document.getElementById('lm-appel');if(el)el.value=d.lettre.appel;}
+      if(d.lettre.politesse){const el=document.getElementById('lm-politesse');if(el)el.value=d.lettre.politesse;}
+    }
+    if(d.template)setTemplate(d.template);
+    if(d.colors){document.getElementById('color-sidebar').value=d.colors.sidebar;document.getElementById('color-accent').value=d.colors.accent;applyColors();}
+    if(d.font){document.getElementById('cv-font-select').value=d.font;applyFont();}
+    if(d.qrLinkedin){const el=document.getElementById('qr-linkedin');if(el)el.checked=d.qrLinkedin;}
+    if(d.fontSize){document.getElementById('font-size-range').value=d.fontSize;applyFontSize();}
+    updatePreview();
+  }catch(e){console.error(e);}
+}
+function clearAll(){if(!confirm('Effacer toutes les données ?'))return;localStorage.removeItem('cv_builder_v2');location.reload();}
+// ── EXPORT PDF via @media print direct (texte vectoriel, pas de popup) ──
+function printElement(elements){
+  const fo=document.getElementById('cv-font-override');
+  const foCSS=fo?fo.textContent:'';
+
+  // CSS d'impression : masquer tout sauf #cv-print-container
+  const style=document.createElement('style');
+  style.id='cv-print-style';
+  style.textContent=`
+    @media print {
+      @page { size: 794px 1123px; margin: 0; }
+      * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+      body > * { display: none !important; }
+      #cv-print-container { display: block !important; margin: 0 !important; padding: 0 !important; }
+      #cv-print-container > #cv-preview,
+      #cv-print-container > #lettre-preview {
+        display: flex !important;
+        transform: none !important; box-shadow: none !important;
+        overflow: visible !important;
+        width: 794px !important;
+        margin: 0 !important;
+      }
+      /* Sidebar/col-left pleine hauteur de page */
+      #cv-print-container .cv-sidebar,
+      #cv-print-container .cv-col-left { min-height: 1123px !important; align-self: stretch !important; }
+      #cv-print-container .cv-main    { min-height: 1123px !important; align-self: stretch !important; }
+      .cv-print-break { page-break-before: always; break-before: page; display: block !important; height: 0 !important; }
+      .cv-drag-handle, .cv-sidebar-drag, .cv-col-left-drag, .cv-empty-hint { display: none !important; }
+      ${foCSS}
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Créer un conteneur direct sous body
+  const container=document.createElement('div');
+  container.id='cv-print-container';
+  container.style.cssText='position:absolute;top:0;left:0;pointer-events:none;';
+  document.body.appendChild(container);
+
+  // Déplacer les éléments dans le conteneur (les retirer de leur position d'origine)
+  const parents=[]; // mémoriser parent + nextSibling pour restaurer
+  elements.forEach((el,i)=>{
+    parents.push({el, parent:el.parentElement, next:el.nextSibling});
+    if(i>0){
+      const brk=document.createElement('div');
+      brk.className='cv-print-break';
+      container.appendChild(brk);
+    }
+    // Retirer les handles drag du clone
+    const clone=el.cloneNode(true);
+    clone.id=el.id;
+    clone.className=el.className;
+    clone.removeAttribute('style');
+    clone.querySelectorAll('.cv-drag-handle,.cv-sidebar-drag,.cv-col-left-drag,.cv-empty-hint').forEach(h=>h.remove());
+    container.appendChild(clone);
+  });
+
+  window.print();
+
+  // Nettoyage
+  setTimeout(()=>{
+    style.remove();
+    container.remove();
+  }, 2000);
+}
+function exportPDF(){
+  showToast('💡 Boîte d’impression → choisir "Enregistrer en PDF"');
+  setTimeout(()=>printElement([document.getElementById('cv-preview')]),200);
+}
+function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22222e;color:#e8e8f0;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid #2e2e3e;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:opacity .3s;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadData();applyFontSize();updatePreview();fitZoom();initResize();loadCustomPalettes();
+  const zone=document.getElementById('photo-upload-zone');
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))handlePhotoUpload({target:{files:[f]}});});
+  Sortable.create(document.getElementById('cv-normal-sections'),{animation:200,handle:'.cv-drag-handle',ghostClass:'cv-sortable-ghost'});
+  Sortable.create(document.getElementById('cv-mini-right'),{animation:200,handle:'.cv-drag-handle',ghostClass:'cv-sortable-ghost'});
+  // Drag&drop sections colonne gauche du CV
+  // Drag sections sidebar (moderne + coloré)
+  Sortable.create(document.querySelector('.cv-sidebar'),{animation:200,handle:'.cv-sidebar-drag',ghostClass:'cv-sidebar-sortable-ghost',filter:'.cv-photo-block'});
+  // Drag sections col-left (minimaliste)
+  Sortable.create(document.querySelector('.cv-col-left'),{animation:200,handle:'.cv-col-left-drag',ghostClass:'cv-sortable-ghost'});
+  // Enter pour ajouter langue/certif/interet
+  document.getElementById('new-tech').addEventListener('keydown',e=>{if(e.key==='Enter')addSkill('tech');});
+  document.getElementById('new-soft').addEventListener('keydown',e=>{if(e.key==='Enter')addSkill('soft');});
+  document.getElementById('new-lang-name').addEventListener('keydown',e=>{if(e.key==='Enter')addLangue();});
+  document.getElementById('new-interet').addEventListener('keydown',e=>{if(e.key==='Enter')addInteret();});
+  window.addEventListener('resize',fitZoom);
+});
+</script>
+</body>
+</html>
